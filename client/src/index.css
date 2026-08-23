@@ -1,0 +1,30 @@
+@import 'highlight.js/styles/github-dark.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface text-zinc-100 antialiased;
+}
+
+/* article styling */
+.blog-content :is(h2) {
+  @apply mt-10 border-b border-borderc pb-2 text-2xl font-bold sm:text-3xl;
+}
+.blog-content :is(h3) {
+  @apply mt-8 text-xl font-semibold sm:text-2xl;
+}
+.blog-content :is(h4) {
+  @apply mt-6 text-lg font-semibold sm:text-xl;
+}
+.blog-content pre {
+  @apply overflow-x-auto rounded-lg border border-borderc p-4 text-sm leading-relaxed;
+}
+.blog-content code:not(pre code) {
+  @apply rounded bg-zinc-800 px-1.5 py-0.5 text-[0.85em] font-medium text-orange-300;
+}
