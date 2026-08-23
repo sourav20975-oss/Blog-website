@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -64,8 +65,8 @@ function saveLocal(buffer, mimetype) {
   return `/uploads/${name}`;
 }
 
-// POST /api/upload - single image, field name: "image"
-router.post('/', upload.single('image'), async (req, res) => {
+// POST /api/upload - single image, field name: "image" (auth required)
+router.post('/', requireAuth, requireAdmin, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'Koi image nahi mili' });
 

@@ -41,18 +41,22 @@ export default function PostCard({ post, onDelete }) {
           >
             Read More
           </Link>
-          <Link
-            to={`/edit/${post.slug}`}
-            className="rounded-lg border border-borderc px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Edit
-          </Link>
-          <button
-            onClick={() => onDelete(post)}
-            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950"
-          >
-            Delete
-          </button>
+          {onDelete ? (
+            <>
+              <Link
+                to={`/edit/${post.slug}`}
+                className="rounded-lg border border-borderc px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              >
+                Edit
+              </Link>
+              <button
+                onClick={() => onDelete(post)}
+                className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950"
+              >
+                Delete
+              </button>
+            </>
+          ) : null}
         </div>
       </div>
     </article>

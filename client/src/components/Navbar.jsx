@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { applyTheme, getStoredTheme } from '../theme';
+import { useAuth } from '../AuthContext';
 
 function SunIcon() {
   return (
@@ -29,6 +30,13 @@ function MoonIcon() {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState(getStoredTheme);
+  const { user, isLoggedIn, isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   // Agar user OS se theme badle aur localStorage me choice save na ho
   useEffect(() => {
@@ -78,10 +86,41 @@ export default function Navbar() {
             <NavLink to="/" className={linkClass} end>
               Home
             </NavLink>
-            <NavLink to="/create" className={linkClass}>
-              New Post
-            </NavLink>
+            {isAdmin ? (
+              <NavLink to="/create" className={linkClass}>
+                New Post
+              </NavLink>
+            ) : null}
           </div>
+
+          {isLoggedIn ? (
+            <>
+              <span className="hidden max-w-[10rem] truncate rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-600 dark:text-orange-400 md:block">
+                {user.name}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-red-50 hover:text-red-500 dark:text-zinc-300 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:text-orange-500 dark:text-zinc-300 dark:hover:text-orange-400"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="rounded-lg bg-orange-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 active:scale-[0.98]"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
 
           <button
             onClick={toggleTheme}
@@ -113,10 +152,25 @@ export default function Navbar() {
           <NavLink to="/" className={`${linkClass({ isActive: false })} block`} end onClick={() => setOpen(false)}>
             Home
           </NavLink>
-          <NavLink to="/create" className={`${linkClass({ isActive: false })} mt-1 block`} onClick={() => setOpen(false)}>
-            New Post
-          </NavLink>
-        </div>
+          {isAdmin && (
+            <>
+              <NavLink
+                to="/create"
+                className={`${linkClass({ isActive: false })} mt-1 block`}
+                onClick={() => setOpen(false)}
+              >
+                New Post
+              </NavLink>
+            </>
+          )}
+          {isLoggedIn && (
+            <button
+              onClick={handleLogout}
+              className="mt-1 block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
+            >
+              Logout ({user.name})
+            </button>
+          )}        </div>
       )}
     </header>
   );

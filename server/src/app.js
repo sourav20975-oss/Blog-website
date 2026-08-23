@@ -2,8 +2,11 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const postsRouter = require('./routes/posts');
 const uploadRouter = require('./routes/upload');
+const authRouter = require('./routes/auth');
 const path = require('path');
 const dns = require('dns');
 
@@ -12,11 +15,53 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 function buildApp() {
   const app = express();
+
+  // Render ke reverse proxy ke peeche sahi IP ke liye (rate limiting accurate rahe)
+  app.set('trust proxy', 1);
+
+  // Security headers. CSP off (API + cross-origin images), CORP cross-origin taaki
+  // /uploads ki images frontend domain se load ho sakein.
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      crossOriginEmbedderPolicy: false,
+    })
+  );
+
   app.use(cors());
+
+  // General rate limit
+  const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 500,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Bahut zyada requests — thodi der baad try karo' },
+  });
+  app.use(globalLimiter);
+
   app.use(express.json({ limit: '2mb' }));
+
+  // Auth routes pe stricter limit (brute-force protection)
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 50,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Auth attempts limit cross ho gayi — 15 min baad try karo' },
+  });
+  const otpLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 6,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'OTP spam protection — thodi der baad try karo' },
+  });
 
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
   app.get('/api/health', (req, res) => res.json({ ok: true }));
+  app.use('/api/auth', authLimiter, authRouter);
   app.use('/api/posts', postsRouter);
   app.use('/api/upload', uploadRouter);
 

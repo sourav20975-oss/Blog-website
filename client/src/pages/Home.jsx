@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchPosts, deletePost } from '../api';
 import PostCard from '../components/PostCard';
+import { useAuth } from '../AuthContext';
 
 export default function Home() {
   const [posts, setPosts] = useState(null);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+  const { isAdmin } = useAuth();
 
   const load = () => {
     fetchPosts()
@@ -67,12 +69,14 @@ export default function Home() {
             className="w-full rounded-lg border border-borderc bg-card py-2.5 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-zinc-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/40"
           />
         </div>
-        <Link
-          to="/create"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 hover:shadow-md hover:shadow-orange-500/30 active:scale-[0.98]"
-        >
-          + Write a Post
-        </Link>
+        {isAdmin ? (
+          <Link
+            to="/create"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 hover:shadow-md hover:shadow-orange-500/30 active:scale-[0.98]"
+          >
+            + Write a Post
+          </Link>
+        ) : null}
       </div>
 
       {error && (
@@ -103,7 +107,7 @@ export default function Home() {
       {filtered.length > 0 && (
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((post) => (
-            <PostCard key={post.slug} post={post} onDelete={handleDelete} />
+            <PostCard key={post.slug} post={post} onDelete={isAdmin ? handleDelete : null} />
           ))}
         </div>
       )}
