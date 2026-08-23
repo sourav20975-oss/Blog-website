@@ -13,6 +13,7 @@ function getTransporter() {
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
+    family: 4, // IPv4 only — Render pe IPv6 outbound nahi hota
     // Fail fast — SMTP hang hone par request freeze na ho
     connectionTimeout: 10000,
     greetingTimeout: 10000,

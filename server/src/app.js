@@ -13,6 +13,11 @@ const dns = require('dns');
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
+// Render containers me outbound IPv6 nahi hai — Gmail SMTP IPv4 se hi connect hoga
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 function buildApp() {
   const app = express();
 
