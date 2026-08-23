@@ -105,4 +105,3 @@ except AttributeError:
 
 AttributeErrors are annoying but incredibly informative — read the message, it literally names the missing attribute and the type that lacks it. Happy debugging!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/attribute-error-in-python](https://www.codewithharry.com/blogpost/attribute-error-in-python)

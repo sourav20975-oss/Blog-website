@@ -1,6 +1,6 @@
 # BlogVerse - MERN Blog Website
 
-CodeWithHarry jaisi blog website — exact SQL tutorial content ke saath, full CRUD aur fully responsive UI.
+Sourav Kumar ki full-stack MERN blog website — tutorials, notes aur blogs, full CRUD ke saath, fully responsive UI.
 
 ## Structure
 
@@ -68,7 +68,7 @@ MONGO_URI=mongodb+srv://<user>:<pass>@cluster0.xxx.mongodb.net/blogwebsite
 
 ## Features
 
-- Exact CodeWithHarry SQL tutorial content (160+ code blocks, 23 tables) — markdown me stored
+- In-depth tutorial posts (SQL, Docker, Linux, Git, Next.js, Python, C, JS) — markdown me stored
 - Code blocks me Copy button (syntax highlighted)
 - Full CRUD: create, read, update, delete blogs with markdown editor + live preview
 - Fully responsive: mobile hamburger menu, grid 1/2/3 columns, scrollable tables/code

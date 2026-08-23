@@ -81,4 +81,3 @@ export default async function handler(req, res) {
 
 The `lib/mongodb.js` file looks small, but it's the backbone of every Next.js + MongoDB project. Cache the promise in development, connect once per instance in production, and await the same promise everywhere — that's the whole secret.
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/how-to-integrate-mongodb-into-your-nextjs-apps](https://www.codewithharry.com/blogpost/how-to-integrate-mongodb-into-your-nextjs-apps)

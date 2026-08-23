@@ -79,4 +79,3 @@ In a large codebase the crash traceback points at the failing line, but the *rea
 
 ZeroDivisionError means math said no. Wrap risky divisions in try/except, or guard with an `if` — and your program survives bad input gracefully. Happy coding!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/solved-python-zerodivision-error](https://www.codewithharry.com/blogpost/solved-python-zerodivision-error)

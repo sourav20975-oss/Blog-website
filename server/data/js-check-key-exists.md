@@ -100,4 +100,3 @@ for (const key in settings) {
 
 Both belong in your toolkit — now you know exactly which does what. Happy coding!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/how-to-check-if-keys-exist-in-javascript-objects](https://www.codewithharry.com/blogpost/how-to-check-if-keys-exist-in-javascript-objects)

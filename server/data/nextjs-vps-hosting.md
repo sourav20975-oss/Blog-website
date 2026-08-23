@@ -146,4 +146,3 @@ Browser ──HTTPS──▶ NGINX (:80/:443)
 
 That's it — production-grade hosting on your own terms. Happy deploying!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/hosting-a-next-js-app-in-production-on-ubuntu-vps](https://www.codewithharry.com/blogpost/hosting-a-next-js-app-in-production-on-ubuntu-vps)

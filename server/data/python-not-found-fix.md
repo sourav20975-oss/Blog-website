@@ -21,7 +21,7 @@ If Python isn't installed yet:
 2. Run the installer.
 3. **CRITICAL**: tick the checkbox **"Add python.exe to PATH"** (on older installers: *"Add Python to environment variables"*) at the bottom of the first screen.
 
-![Install with path checked](https://cwh-full-next-space.fra1.cdn.digitaloceanspaces.com/blogpost/solving-python-not-found-run-without-arguments/python-install-with-path.png)
+**Tick "Add python.exe to PATH" at the bottom of the first installer screen.**
 
 That single checkbox prevents this entire problem. Done!
 
@@ -73,4 +73,3 @@ If you'd rather never see the Microsoft Store suggestion again:
 
 The "Python was not found" error = PATH problem. Either reinstall with the PATH checkbox ticked, or manually add your existing Python + Scripts folders to the System Path. New terminal, verify, done. Happy coding!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/solving-python-not-found-run-without-arguments](https://www.codewithharry.com/blogpost/solving-python-not-found-run-without-arguments)

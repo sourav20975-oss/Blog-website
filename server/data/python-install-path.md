@@ -63,4 +63,3 @@ print(sys.prefix)       # installation root
 
 All three get you the same answer — pick whichever matches where you're already working. Happy coding!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/how-to-find-python-installation-path](https://www.codewithharry.com/blogpost/how-to-find-python-installation-path)

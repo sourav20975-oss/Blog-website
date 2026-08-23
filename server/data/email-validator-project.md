@@ -208,4 +208,3 @@ Save all three files, open `index.html` in a browser (VS Code Live Server works 
 
 You just built a working API-powered tool with plain HTML/CSS/JS — no frameworks. Next steps to level it up: move the API key behind your own backend (never ship keys in client code for production!), add regex pre-validation before calling the API, and style invalid states in red.
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/email-validator-using-html-css-js](https://www.codewithharry.com/blogpost/email-validator-using-html-css-js)

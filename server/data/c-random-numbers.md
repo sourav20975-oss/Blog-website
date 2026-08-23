@@ -70,4 +70,3 @@ int low_to_high = low + rand() % (high - low + 1);   // low..high inclusive
 
 That's the whole story: `rand()` picks from a fixed sequence, `srand(time(0))` shuffles where the sequence starts. Happy coding!
 
-> Source: adapted from CodeWithHarry's blog — [codewithharry.com/blogpost/c-random-numbers-guide](https://www.codewithharry.com/blogpost/c-random-numbers-guide)
