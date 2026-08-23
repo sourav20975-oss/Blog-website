@@ -35,7 +35,7 @@ function TBtn({ title, onClick, children, disabled }) {
       title={title}
       onClick={onClick}
       disabled={disabled}
-      className="rounded-md p-2 text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-40"
+      className="rounded-md p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-40 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-white"
     >
       {children}
     </button>
@@ -233,7 +233,9 @@ export default function MarkdownEditor({ value, onChange }) {
               type="button"
               onClick={() => setMode(m)}
               className={`hidden rounded-md px-2.5 py-1.5 text-xs font-medium sm:block ${
-                mode === m ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:bg-zinc-800'
+                mode === m
+                  ? 'bg-orange-500 text-white'
+                  : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
               }`}
             >
               {label}
@@ -243,7 +245,7 @@ export default function MarkdownEditor({ value, onChange }) {
           <button
             type="button"
             onClick={() => setMode(mode === 'write' ? 'preview' : 'write')}
-            className="rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 sm:hidden"
+            className="rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 sm:hidden"
           >
             {mode === 'write' ? 'Preview' : 'Edit'}
           </button>
@@ -307,7 +309,11 @@ export default function MarkdownEditor({ value, onChange }) {
           e.target.value = '';
         }}
       />
-      {imgError && <p className="border-t border-red-900 bg-red-950/40 px-4 py-2 text-xs text-red-300">{imgError}</p>}
+      {imgError && (
+        <p className="border-t border-red-200 bg-red-50 px-4 py-2 text-xs text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+          {imgError}
+        </p>
+      )}
     </div>
   );
 }

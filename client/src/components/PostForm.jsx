@@ -54,13 +54,15 @@ export default function PostForm({ initial, onSubmit, submitting, error }) {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-borderc bg-card px-3 py-2 text-sm outline-none placeholder:text-zinc-500 focus:border-orange-500';
-  const labelClass = 'mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-400';
+    'w-full rounded-lg border border-borderc bg-card px-3 py-2 text-sm outline-none transition-colors placeholder:text-zinc-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/40';
+  const labelClass = 'mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <p className="rounded-lg border border-red-900 bg-red-950/40 p-3 text-sm text-red-300">{error}</p>
+        <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+          {error}
+        </p>
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -97,7 +99,7 @@ export default function PostForm({ initial, onSubmit, submitting, error }) {
               type="button"
               onClick={() => coverFileRef.current?.click()}
               disabled={coverUploading}
-              className="shrink-0 rounded-lg border border-borderc px-3 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50"
+              className="shrink-0 rounded-lg border border-borderc px-3 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               {coverUploading ? '...' : 'Upload'}
             </button>
@@ -131,7 +133,7 @@ export default function PostForm({ initial, onSubmit, submitting, error }) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 sm:w-auto sm:px-8"
+        className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 hover:shadow-md active:scale-[0.99] disabled:opacity-50 sm:w-auto sm:px-8"
       >
         {submitting ? 'Saving...' : 'Save Post'}
       </button>
