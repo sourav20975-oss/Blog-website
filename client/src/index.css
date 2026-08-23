@@ -8,11 +8,28 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  @apply bg-surface text-zinc-100 antialiased;
+/* ---- Theme variables (rgb triplets for Tailwind alpha support) ---- */
+:root {
+  --surface: 248 250 252; /* light page bg   */
+  --card: 255 255 255; /* light card bg   */
+  --borderc: 228 228 231; /* light borders   */
 }
 
-/* article styling */
+.dark {
+  --surface: 10 10 11; /* dark page bg    */
+  --card: 20 20 23; /* dark card bg    */
+  --borderc: 39 39 42; /* dark borders    */
+}
+
+body {
+  @apply bg-surface text-zinc-900 antialiased transition-colors duration-200 dark:text-zinc-100;
+}
+
+::selection {
+  @apply bg-orange-500/30;
+}
+
+/* article styling — code blocks dono themes me dark hi rehte hain (GitHub style) */
 .blog-content :is(h2) {
   @apply mt-10 border-b border-borderc pb-2 text-2xl font-bold sm:text-3xl;
 }
@@ -26,5 +43,11 @@ body {
   @apply overflow-x-auto rounded-lg border border-borderc p-4 text-sm leading-relaxed;
 }
 .blog-content code:not(pre code) {
-  @apply rounded bg-zinc-800 px-1.5 py-0.5 text-[0.85em] font-medium text-orange-300;
+  @apply rounded bg-zinc-100 px-1.5 py-0.5 text-[0.85em] font-medium text-orange-600 dark:bg-zinc-800 dark:text-orange-300;
+}
+.blog-content blockquote {
+  @apply border-l-4 border-orange-500 pl-4 italic text-zinc-600 dark:text-zinc-400;
+}
+.blog-content table th {
+  @apply bg-zinc-100 dark:bg-zinc-800/60;
 }

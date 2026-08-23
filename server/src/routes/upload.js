@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (ALLOWED[file.mimetype]) return cb(null, true);
-    cb(new Error('Sirf JPG, PNG, GIF, WEBP images allowed hain'));
+    cb(new Error('Only JPG, PNG, GIF, WEBP images are allowed'));
   },
 });
 
@@ -64,10 +65,10 @@ function saveLocal(buffer, mimetype) {
   return `/uploads/${name}`;
 }
 
-// POST /api/upload - single image, field name: "image"
-router.post('/', upload.single('image'), async (req, res) => {
+// POST /api/upload - single image, field name: "image" (auth required)
+router.post('/', requireAuth, requireAdmin, upload.single('image'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: 'Koi image nahi mili' });
+    if (!req.file) return res.status(400).json({ message: 'No image found' });
 
     let url;
     if (getCloudinary()) {

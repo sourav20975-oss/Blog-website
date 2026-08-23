@@ -35,7 +35,7 @@ function TBtn({ title, onClick, children, disabled }) {
       title={title}
       onClick={onClick}
       disabled={disabled}
-      className="rounded-md p-2 text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-40"
+      className="rounded-md p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-40 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-white"
     >
       {children}
     </button>
@@ -123,7 +123,7 @@ export default function MarkdownEditor({ value, onChange }) {
   async function uploadAndInsert(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setImgError('Sirf image files upload kar sakte ho');
+      setImgError('Only image files can be uploaded');
       return;
     }
     setUploading(true);
@@ -233,7 +233,9 @@ export default function MarkdownEditor({ value, onChange }) {
               type="button"
               onClick={() => setMode(m)}
               className={`hidden rounded-md px-2.5 py-1.5 text-xs font-medium sm:block ${
-                mode === m ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:bg-zinc-800'
+                mode === m
+                  ? 'bg-orange-500 text-white'
+                  : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
               }`}
             >
               {label}
@@ -243,7 +245,7 @@ export default function MarkdownEditor({ value, onChange }) {
           <button
             type="button"
             onClick={() => setMode(mode === 'write' ? 'preview' : 'write')}
-            className="rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 sm:hidden"
+            className="rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 sm:hidden"
           >
             {mode === 'write' ? 'Preview' : 'Edit'}
           </button>
@@ -272,12 +274,12 @@ export default function MarkdownEditor({ value, onChange }) {
               }}
               onDragOver={(e) => e.preventDefault()}
               rows={16}
-              placeholder={'# Apna heading likho...\n\nParagraph yahan aayega. Image **paste** ya **drop** bhi kar sakte ho.'}
+              placeholder={'# Your heading here...\n\nParagraph text goes here. You can also **paste** or **drop** images.'}
               className="w-full resize-y bg-transparent px-4 py-3 font-mono text-sm leading-relaxed outline-none placeholder:text-zinc-600"
             />
             <div className="flex items-center justify-between border-t border-borderc px-4 py-1.5 text-[11px] text-zinc-500">
               <span>{words} words &middot; {value.length} chars</span>
-              <span className="hidden sm:inline">Markdown supported — images paste/drop karke upload hoti hain</span>
+              <span className="hidden sm:inline">Markdown supported — images upload on paste/drop</span>
             </div>
           </div>
         )}
@@ -291,7 +293,7 @@ export default function MarkdownEditor({ value, onChange }) {
             {value.trim() ? (
               <Markdown>{value}</Markdown>
             ) : (
-              <p className="text-sm italic text-zinc-600">Preview yahan dikhega...</p>
+                <p className="text-sm italic text-zinc-600">Preview will appear here...</p>
             )}
           </div>
         )}
@@ -307,7 +309,11 @@ export default function MarkdownEditor({ value, onChange }) {
           e.target.value = '';
         }}
       />
-      {imgError && <p className="border-t border-red-900 bg-red-950/40 px-4 py-2 text-xs text-red-300">{imgError}</p>}
+      {imgError && (
+        <p className="border-t border-red-200 bg-red-50 px-4 py-2 text-xs text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+          {imgError}
+        </p>
+      )}
     </div>
   );
 }

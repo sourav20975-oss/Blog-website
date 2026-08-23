@@ -1,6 +1,6 @@
 // In-memory MongoDB ke saath dev server (bina Atlas/local install ke testing)
 // Data temporary hai - server band karte hi reset ho jata hai.
-const { upsertSeedPost } = require('./seedData');
+const { upsertSeedPosts } = require('./seedData');
 
 async function main() {
   let MongoMemoryServer;
@@ -20,7 +20,7 @@ async function main() {
 
   const Post = require('./models/Post');
   if ((await Post.countDocuments()) === 0) {
-    await upsertSeedPost();
+    await upsertSeedPosts();
   }
 
   const shutdown = async () => {
