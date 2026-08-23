@@ -56,13 +56,6 @@ function buildApp() {
     legacyHeaders: false,
     message: { message: 'Auth attempt limit reached — try again in 15 minutes' },
   });
-  const otpLimiter = rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 6,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { message: 'OTP limit reached — please try again later' },
-  });
 
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
   app.get('/api/health', (req, res) => res.json({ ok: true }));

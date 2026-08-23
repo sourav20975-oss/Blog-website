@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '../api';
-import Captcha from '../components/Captcha';
+import { useAuth } from '../AuthContext';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { loginSession } = useAuth();
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
-  const [captchaId, setCaptchaId] = useState(null);
-  const [captchaText, setCaptchaText] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -17,20 +15,10 @@ export default function Signup() {
     setForm((f) => ({ ...f, [key]: e.target.value }));
   };
 
-  const refreshCaptcha = () => {
-    setCaptchaId(null);
-    setCaptchaText('');
-    setRefreshKey((k) => k + 1);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirm) {
       setError('Password and Confirm Password do not match');
-      return;
-    }
-    if (!captchaId) {
-      setError('Captcha is loading — please wait a second');
       return;
     }
     setSubmitting(true);
@@ -39,14 +27,10 @@ export default function Signup() {
         name: form.name,
         email: form.email,
         password: form.password,
-        captchaId,
-        captchaText,
       });
-      navigate('/verify-otp', {
-        state: { email: res.email || form.email, devOtp: res.devOtp, notice: res.message },
-      });
+      loginSession(res.token, res.user);
+      navigate('/');
     } catch (err) {
-      if (err.message.toLowerCase().includes('captcha')) refreshCaptcha();
       setError(err.message);
     } finally {
       setSubmitting(false);
@@ -64,7 +48,7 @@ export default function Signup() {
           Create <span className="text-orange-500 dark:text-orange-400">Account</span>
         </h1>
         <p className="mt-2 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          We'll email you an OTP — verify it to complete your signup
+          Sign up with your email and a password
         </p>
 
         {error && (
@@ -124,20 +108,12 @@ export default function Signup() {
             />
           </div>
 
-          <Captcha
-            value={captchaText}
-            onChange={(v) => setCaptchaText(v)}
-            onError={setError}
-            onLoaded={setCaptchaId}
-            refreshKey={refreshKey}
-          />
-
           <button
             type="submit"
             disabled={submitting}
             className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 active:scale-[0.99] disabled:opacity-50"
           >
-            {submitting ? 'Sending OTP...' : 'Sign Up — Send OTP'}
+            {submitting ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 

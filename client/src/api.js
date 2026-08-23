@@ -101,31 +101,11 @@ export function uploadImage(file) {
 }
 
 // ---- Auth API ----
-export function getCaptcha() {
-  return timedFetch(`${API_BASE}/api/auth/captcha`).then(handle);
-}
-
 export function signup(data) {
   return timedFetch(`${API_BASE}/api/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  }).then(handle);
-}
-
-export function verifyOtp(data) {
-  return timedFetch(`${API_BASE}/api/auth/verify-otp`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  }).then(handle);
-}
-
-export function resendOtp(email) {
-  return timedFetch(`${API_BASE}/api/auth/resend-otp`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
   }).then(handle);
 }
 

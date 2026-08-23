@@ -8,7 +8,6 @@ import CreatePost from './pages/CreatePost';
 import EditPost from './pages/EditPost';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import VerifyOtp from './pages/VerifyOtp';
 
 export default function App() {
   return (
@@ -37,7 +36,6 @@ export default function App() {
             />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </div>

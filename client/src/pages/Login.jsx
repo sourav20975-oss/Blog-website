@@ -2,46 +2,26 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { useAuth } from '../AuthContext';
-import Captcha from '../components/Captcha';
 
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { loginSession } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
-  const [captchaId, setCaptchaId] = useState(null);
-  const [captchaText, setCaptchaText] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const refreshCaptcha = () => {
-    setCaptchaId(null);
-    setCaptchaText('');
-    setRefreshKey((k) => k + 1);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!captchaId) {
-      setError('Captcha is loading — please wait a second');
-      return;
-    }
     setSubmitting(true);
     try {
       const res = await login({
         email: form.email,
         password: form.password,
-        captchaId,
-        captchaText,
       });
       loginSession(res.token, res.user);
       navigate(location.state?.from || '/');
     } catch (err) {
-      if (err.message.toLowerCase().includes('captcha')) refreshCaptcha();
-      if (err.message.includes('verified nahi')) {
-        setTimeout(() => navigate('/verify-otp', { state: { email: form.email } }), 1200);
-      }
       setError(err.message);
     } finally {
       setSubmitting(false);
@@ -89,21 +69,16 @@ export default function Login() {
             <input
               type="password"
               value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              onChange={(e) => {
+                setError('');
+                setForm((f) => ({ ...f, password: e.target.value }));
+              }}
               placeholder="••••••••"
               required
               autoComplete="current-password"
               className={inputClass}
             />
           </div>
-
-          <Captcha
-            value={captchaText}
-            onChange={(v) => setCaptchaText(v)}
-            onError={setError}
-            onLoaded={setCaptchaId}
-            refreshKey={refreshKey}
-          />
 
           <button
             type="submit"
@@ -115,7 +90,7 @@ export default function Login() {
         </form>
 
         <p className="mt-5 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Naya user ho?{' '}
+          New to BlogVerse?{' '}
           <Link to="/signup" className="font-semibold text-orange-500 hover:underline dark:text-orange-400">
             Sign Up
           </Link>

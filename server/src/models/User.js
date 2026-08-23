@@ -13,9 +13,6 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ['admin', 'user'], default: 'user' },
-    isVerified: { type: Boolean, default: false },
-    otpHash: { type: String, default: null },
-    otpExpiresAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
