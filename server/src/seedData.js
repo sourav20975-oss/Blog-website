@@ -35,6 +35,78 @@ const SEED_POSTS = [
       'Fork → Clone → Upstream → Branch → Commit → Push → Pull Request. The complete open source contribution workflow with sync tricks, conflict fixes, PR templates and review etiquette.',
     file: 'git-open-source.md',
   },
+  {
+    title: 'How to Integrate MongoDB into Your Next.js Apps',
+    slug: 'mongodb-nextjs-integration',
+    author: 'Sourav Kumar',
+    quote:
+      'Learn how to seamlessly integrate MongoDB into your Next.js applications with best practices for efficient connection handling, resource management, and improved performance.',
+    file: 'mongodb-nextjs.md',
+  },
+  {
+    title: 'How to Host a Next.js App in Production on an Ubuntu VPS',
+    slug: 'host-nextjs-app-ubuntu-vps',
+    author: 'Sourav Kumar',
+    quote:
+      'Deploy a Next.js application on your own Ubuntu VPS — install packages, build the app, configure NGINX as a reverse proxy, keep it alive with PM2 and secure it with free Certbot HTTPS.',
+    file: 'nextjs-vps-hosting.md',
+  },
+  {
+    title: "Build an Email Validator with HTML, CSS, and JavaScript",
+    slug: 'email-validator-html-css-js',
+    author: 'Sourav Kumar',
+    quote:
+      'A complete mini-project: validate real email addresses using a validation API with plain HTML, CSS and JavaScript — forms, fetch, async/await and responsive design in one build.',
+    file: 'email-validator-project.md',
+  },
+  {
+    title: '[Solved] Python AttributeError: object has no attribute X',
+    slug: 'solved-python-attributeerror',
+    author: 'Sourav Kumar',
+    quote:
+      'Why AttributeErrors happen in Python — nonexistent attributes, typos, early access, class vs instance confusion — with five code examples, try/except handling and a prevention checklist.',
+    file: 'python-attribute-error.md',
+  },
+  {
+    title: "[Solved] 'python was not found' on Windows — The Complete Fix",
+    slug: 'solved-python-was-not-found',
+    author: 'Sourav Kumar',
+    quote:
+      "Fix the infamous 'Python was not found; run without arguments to install from the Microsoft Store' error — reinstall with PATH or add existing Python folders to System variables step by step.",
+    file: 'python-not-found-fix.md',
+  },
+  {
+    title: 'How to Find the Python Installation Path on Windows?',
+    slug: 'find-python-installation-path-windows',
+    author: 'Sourav Kumar',
+    quote:
+      'Locate exactly where Python is installed using where python (CMD), Get-Command (PowerShell) or sys.executable — essential for environment variables and IDE setup.',
+    file: 'python-install-path.md',
+  },
+  {
+    title: 'How to Generate Random Numbers in C Language',
+    slug: 'random-numbers-in-c-guide',
+    author: 'Sourav Kumar',
+    quote:
+      'rand() vs srand() explained — why unseeded runs repeat, how time-based seeding fixes it, generating numbers in a range with modulo, and when pseudo-random is not enough.',
+    file: 'c-random-numbers.md',
+  },
+  {
+    title: 'How to Check if Keys Exist in JavaScript Objects',
+    slug: 'check-keys-exist-javascript-objects',
+    author: 'Sourav Kumar',
+    quote:
+      "The 'in' operator vs hasOwnProperty() vs Object.hasOwn() — syntax, examples and the prototype-chain gotcha that decides which method fits your use case.",
+    file: 'js-check-key-exists.md',
+  },
+  {
+    title: '[Solved] ZeroDivisionError: division by zero in Python',
+    slug: 'solved-python-zerodivisionerror',
+    author: 'Sourav Kumar',
+    quote:
+      'What causes ZeroDivisionError and two standard fixes — try/except for user input and if-guards before dividing — plus how to trace hidden division bugs in big codebases.',
+    file: 'python-zero-division.md',
+  },
 ];
 
 function getContent(file) {
