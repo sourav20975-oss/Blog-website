@@ -1,6 +1,7 @@
-// Dev me vite proxy use hota hai (''). Production me VITE_API_URL set karo,
-// e.g. https://blogverse-api.onrender.com
-const API_BASE = import.meta.env.VITE_API_URL || '';
+// Dev me vite proxy use hota hai (''). Production build me Render backend URL.
+// VITE_API_URL se override bhi kar sakte ho.
+const API_BASE =
+  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'https://blog-website-jj8f.onrender.com');
 
 async function handle(res) {
   const data = await res.json().catch(() => ({}));
