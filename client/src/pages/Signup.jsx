@@ -12,6 +12,11 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const set = (key) => (e) => {
+    setError('');
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+  };
+
   const refreshCaptcha = () => {
     setCaptchaId(null);
     setCaptchaText('');
