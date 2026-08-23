@@ -123,7 +123,7 @@ export default function MarkdownEditor({ value, onChange }) {
   async function uploadAndInsert(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setImgError('Sirf image files upload kar sakte ho');
+      setImgError('Only image files can be uploaded');
       return;
     }
     setUploading(true);
@@ -274,12 +274,12 @@ export default function MarkdownEditor({ value, onChange }) {
               }}
               onDragOver={(e) => e.preventDefault()}
               rows={16}
-              placeholder={'# Apna heading likho...\n\nParagraph yahan aayega. Image **paste** ya **drop** bhi kar sakte ho.'}
+              placeholder={'# Your heading here...\n\nParagraph text goes here. You can also **paste** or **drop** images.'}
               className="w-full resize-y bg-transparent px-4 py-3 font-mono text-sm leading-relaxed outline-none placeholder:text-zinc-600"
             />
             <div className="flex items-center justify-between border-t border-borderc px-4 py-1.5 text-[11px] text-zinc-500">
               <span>{words} words &middot; {value.length} chars</span>
-              <span className="hidden sm:inline">Markdown supported — images paste/drop karke upload hoti hain</span>
+              <span className="hidden sm:inline">Markdown supported — images upload on paste/drop</span>
             </div>
           </div>
         )}
@@ -293,7 +293,7 @@ export default function MarkdownEditor({ value, onChange }) {
             {value.trim() ? (
               <Markdown>{value}</Markdown>
             ) : (
-              <p className="text-sm italic text-zinc-600">Preview yahan dikhega...</p>
+                <p className="text-sm italic text-zinc-600">Preview will appear here...</p>
             )}
           </div>
         )}

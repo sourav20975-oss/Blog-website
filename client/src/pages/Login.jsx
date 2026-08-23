@@ -24,7 +24,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!captchaId) {
-      setError('Captcha load ho raha hai — ek second ruko');
+      setError('Captcha is loading — please wait a second');
       return;
     }
     setSubmitting(true);
@@ -59,7 +59,7 @@ export default function Login() {
           Welcome <span className="text-orange-500 dark:text-orange-400">Back</span>
         </h1>
         <p className="mt-2 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Email aur password se login karo
+          Login with your email and password
         </p>
 
         {error && (

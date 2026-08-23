@@ -44,7 +44,7 @@ export default function Captcha({ value, onChange, onError, onLoaded, refreshKey
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Upar ka code likho"
+          placeholder="Type the code above"
           autoComplete="off"
           required
           className="min-w-0 flex-1 rounded-lg border border-borderc bg-card px-3 py-2 text-sm outline-none transition-colors placeholder:text-zinc-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/40"
@@ -52,7 +52,7 @@ export default function Captcha({ value, onChange, onError, onLoaded, refreshKey
         <button
           type="button"
           onClick={load}
-          title="Naya captcha"
+          title="New captcha"
           aria-label="Refresh captcha"
           className="shrink-0 rounded-lg border border-borderc px-3 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-orange-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-orange-400"
         >

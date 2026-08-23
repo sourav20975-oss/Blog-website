@@ -26,11 +26,11 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirm) {
-      setError('Password aur Confirm Password match nahi kar rahe');
+      setError('Password and Confirm Password do not match');
       return;
     }
     if (!captchaId) {
-      setError('Captcha load ho raha hai — ek second ruko');
+      setError('Captcha is loading — please wait a second');
       return;
     }
     setSubmitting(true);
@@ -64,7 +64,7 @@ export default function Signup() {
           Create <span className="text-orange-500 dark:text-orange-400">Account</span>
         </h1>
         <p className="mt-2 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Email pe OTP aayega — verify karke signup complete hoga
+          We'll email you an OTP — verify it to complete your signup
         </p>
 
         {error && (
@@ -103,7 +103,7 @@ export default function Signup() {
               type="password"
               value={form.password}
               onChange={set('password')}
-              placeholder="Kam se kam 8 characters"
+              placeholder="At least 8 characters"
               required
               minLength={8}
               autoComplete="new-password"
@@ -116,7 +116,7 @@ export default function Signup() {
               type="password"
               value={form.confirm}
               onChange={set('confirm')}
-              placeholder="Dobara wahi password"
+              placeholder="Repeat the same password"
               required
               minLength={8}
               autoComplete="new-password"
@@ -137,7 +137,7 @@ export default function Signup() {
             disabled={submitting}
             className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 active:scale-[0.99] disabled:opacity-50"
           >
-            {submitting ? 'OTP bhej rahe hain...' : 'Sign Up — Send OTP'}
+            {submitting ? 'Sending OTP...' : 'Sign Up — Send OTP'}
           </button>
         </form>
 

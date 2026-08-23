@@ -47,7 +47,7 @@ export default function Home() {
           </span>
         </h1>
         <p className="mx-auto mt-3 max-w-xl text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
-          Tutorials, notes and blogs — sab kuch ek jagah. Free forever.
+          Tutorials, notes and blogs — all in one place. Free forever.
         </p>
       </section>
 
@@ -101,7 +101,7 @@ export default function Home() {
       )}
 
       {posts && filtered.length === 0 && (
-        <p className="mt-10 text-center text-zinc-500">Koi post nahi mila.</p>
+        <p className="mt-10 text-center text-zinc-500">No posts found.</p>
       )}
 
       {filtered.length > 0 && (

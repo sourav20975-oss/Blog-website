@@ -37,7 +37,7 @@ function buildApp() {
     max: 500,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { message: 'Bahut zyada requests — thodi der baad try karo' },
+    message: { message: 'Too many requests — please slow down' },
   });
   app.use(globalLimiter);
 
@@ -49,14 +49,14 @@ function buildApp() {
     max: 50,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { message: 'Auth attempts limit cross ho gayi — 15 min baad try karo' },
+    message: { message: 'Auth attempt limit reached — try again in 15 minutes' },
   });
   const otpLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 6,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { message: 'OTP spam protection — thodi der baad try karo' },
+    message: { message: 'OTP limit reached — please try again later' },
   });
 
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));

@@ -35,7 +35,7 @@ function otpEmailHtml(name, otp) {
         <span style="display:inline-block;background:#fff7ed;border:2px dashed #f97316;border-radius:10px;padding:14px 30px;font-size:32px;font-weight:bold;letter-spacing:10px;color:#ea580c">${otp}</span>
       </div>
       <p style="color:#71717a;font-size:13px;line-height:1.6">
-        Ye OTP <b>10 minutes</b> ke liye valid hai. Agar tumne signup nahi kiya to is email ko ignore kar do.
+        This OTP is valid for <b>10 minutes</b>. If you didn&apos;t sign up, simply ignore this email.
       </p>
     </div>
     <div style="background:#fafafa;padding:14px;text-align:center">

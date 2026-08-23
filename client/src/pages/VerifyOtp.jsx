@@ -39,7 +39,7 @@ export default function VerifyOtp() {
         loginSession(res.token, res.user);
         navigate('/', { state: { welcome: res.message } });
       } else {
-        setInfo(res.message + ' — ab login karo');
+        setInfo(res.message + ' — you can now log in');
         setTimeout(() => navigate('/login'), 1500);
       }
     } catch (err) {
@@ -76,7 +76,7 @@ export default function VerifyOtp() {
         </div>
         <h1 className="mt-4 text-center text-2xl font-extrabold">Verify Email</h1>
         <p className="mt-2 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          <b>{email}</b> par bheje gaye 6-digit OTP daalo
+          Enter the 6-digit OTP sent to <b>{email}</b>
         </p>
 
         {info && (
@@ -117,22 +117,22 @@ export default function VerifyOtp() {
         <p className="mt-5 text-center text-sm text-zinc-600 dark:text-zinc-400">
           OTP nahi aaya?{' '}
           {cooldown > 0 ? (
-            <span className="text-zinc-500">{cooldown}s me retry...</span>
+            <span className="text-zinc-500">Retry in {cooldown}s...</span>
           ) : (
             <button
               onClick={handleResend}
               disabled={resending}
               className="font-semibold text-orange-500 hover:underline disabled:opacity-50 dark:text-orange-400"
             >
-              {resending ? 'Bhej rahe hain...' : 'Resend OTP'}
+              {resending ? 'Sending...' : 'Resend OTP'}
             </button>
           )}
         </p>
 
         <p className="mt-2 text-center text-xs text-zinc-500">
-          Galat email?{' '}
+          Wrong email?{' '}
           <Link to="/signup" className="text-orange-500 hover:underline dark:text-orange-400">
-            Dobara signup karo
+            Sign up again
           </Link>
         </p>
       </div>

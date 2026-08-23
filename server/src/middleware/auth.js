@@ -20,14 +20,14 @@ function requireAuth(req, res, next) {
       })
       .catch(next);
   } catch {
-    return res.status(401).json({ message: 'Session expired — dobara login karo' });
+    return res.status(401).json({ message: 'Session expired — please log in again' });
   }
 }
 
 // Login ke BAAD role check — sirf admin aage badh sakta hai
 function requireAdmin(req, res, next) {
   if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Sirf admin ye kaam kar sakta hai' });
+    return res.status(403).json({ message: 'Admin access required' });
   }
   next();
 }

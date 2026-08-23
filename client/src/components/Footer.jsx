@@ -41,7 +41,7 @@ export default function Footer() {
             Blog<span className="text-orange-500 dark:text-orange-400">Verse</span>
           </Link>
           <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-            Tutorials, notes and blogs — sab kuch ek jagah. Learn to code, free forever.
+            Tutorials, notes and blogs — all in one place. Learn to code, free forever.
           </p>
           <div className="mt-4 flex gap-2">
             {SOCIALS.map((s) => (
