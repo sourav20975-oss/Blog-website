@@ -43,7 +43,7 @@ export default function Signup() {
         captchaText,
       });
       navigate('/verify-otp', {
-        state: { email: res.email || form.email, devOtp: res.devOtp },
+        state: { email: res.email || form.email, devOtp: res.devOtp, notice: res.message },
       });
     } catch (err) {
       if (err.message.toLowerCase().includes('captcha')) refreshCaptcha();

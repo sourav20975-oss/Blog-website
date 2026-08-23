@@ -43,16 +43,32 @@ async function handle(res) {
   return data;
 }
 
+// Free-tier servers cold-start slowly — 60s tak wait karo, phir friendly error
+async function timedFetch(url, options = {}, ms = 60000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Server is taking too long to respond — please try again in a moment');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function fetchPosts() {
-  return fetch(`${API_BASE}/api/posts`).then(handle);
+  return timedFetch(`${API_BASE}/api/posts`).then(handle);
 }
 
 export function fetchPost(slug) {
-  return fetch(`${API_BASE}/api/posts/${slug}`).then(handle);
+  return timedFetch(`${API_BASE}/api/posts/${slug}`).then(handle);
 }
 
 export function createPost(data) {
-  return fetch(`${API_BASE}/api/posts`, {
+  return timedFetch(`${API_BASE}/api/posts`, {
     method: 'POST',
     headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(data),
@@ -60,7 +76,7 @@ export function createPost(data) {
 }
 
 export function updatePost(slug, data) {
-  return fetch(`${API_BASE}/api/posts/${slug}`, {
+  return timedFetch(`${API_BASE}/api/posts/${slug}`, {
     method: 'PUT',
     headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(data),
@@ -68,7 +84,7 @@ export function updatePost(slug, data) {
 }
 
 export function deletePost(slug) {
-  return fetch(`${API_BASE}/api/posts/${slug}`, {
+  return timedFetch(`${API_BASE}/api/posts/${slug}`, {
     method: 'DELETE',
     headers: authHeaders(),
   }).then(handle);
@@ -77,7 +93,7 @@ export function deletePost(slug) {
 export function uploadImage(file) {
   const fd = new FormData();
   fd.append('image', file);
-  return fetch(`${API_BASE}/api/upload`, {
+  return timedFetch(`${API_BASE}/api/upload`, {
     method: 'POST',
     headers: authHeaders(),
     body: fd,
@@ -86,11 +102,11 @@ export function uploadImage(file) {
 
 // ---- Auth API ----
 export function getCaptcha() {
-  return fetch(`${API_BASE}/api/auth/captcha`).then(handle);
+  return timedFetch(`${API_BASE}/api/auth/captcha`).then(handle);
 }
 
 export function signup(data) {
-  return fetch(`${API_BASE}/api/auth/signup`, {
+  return timedFetch(`${API_BASE}/api/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -98,7 +114,7 @@ export function signup(data) {
 }
 
 export function verifyOtp(data) {
-  return fetch(`${API_BASE}/api/auth/verify-otp`, {
+  return timedFetch(`${API_BASE}/api/auth/verify-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -106,7 +122,7 @@ export function verifyOtp(data) {
 }
 
 export function resendOtp(email) {
-  return fetch(`${API_BASE}/api/auth/resend-otp`, {
+  return timedFetch(`${API_BASE}/api/auth/resend-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
@@ -114,7 +130,7 @@ export function resendOtp(email) {
 }
 
 export function login(data) {
-  return fetch(`${API_BASE}/api/auth/login`, {
+  return timedFetch(`${API_BASE}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -122,7 +138,7 @@ export function login(data) {
 }
 
 export function fetchMe(token) {
-  return fetch(`${API_BASE}/api/auth/me`, {
+  return timedFetch(`${API_BASE}/api/auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
   }).then(handle);
 }

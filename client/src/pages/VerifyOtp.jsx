@@ -9,10 +9,11 @@ export default function VerifyOtp() {
   const { loginSession } = useAuth();
   const email = location.state?.email || '';
   const devOtp = location.state?.devOtp;
+  const initialNotice = location.state?.notice;
 
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
+  const [info, setInfo] = useState(initialNotice || '');
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
   const [cooldown, setCooldown] = useState(30);

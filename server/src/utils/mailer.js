@@ -13,6 +13,10 @@ function getTransporter() {
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
+    // Fail fast — SMTP hang hone par request freeze na ho
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,

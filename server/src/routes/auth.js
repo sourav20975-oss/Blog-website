@@ -109,8 +109,9 @@ router.post('/signup', async (req, res, next) => {
     res.status(201).json({
       message: delivered
         ? `OTP sent to ${normalizedEmail} — verify within 10 minutes`
-        : 'OTP generated (SMTP not configured — check server console)',
+        : 'OTP could not be emailed: SMTP is not configured on this server. Ask the admin to set SMTP_USER and SMTP_PASS.',
       email: normalizedEmail,
+      emailSent: delivered,
       devOtp,
     });
   } catch (err) {
@@ -173,7 +174,10 @@ router.post('/resend-otp', async (req, res, next) => {
 
     const { delivered, devOtp } = await issueAndSendOtp(user);
     res.json({
-      message: delivered ? 'A new OTP has been sent' : 'New OTP generated (check server console)',
+      message: delivered
+        ? 'A new OTP has been sent'
+        : 'OTP could not be emailed: SMTP is not configured on this server',
+      emailSent: delivered,
       devOtp,
     });
   } catch (err) {
