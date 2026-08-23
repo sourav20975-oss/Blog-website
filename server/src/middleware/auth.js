@@ -10,9 +10,9 @@ function requireAuth(req, res, next) {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     User.findById(payload.id)
-      .select('-passwordHash -otpHash -otpExpiresAt')
+      .select('-passwordHash')
       .then((user) => {
-        if (!user || !user.isVerified) {
+        if (!user) {
           return res.status(401).json({ message: 'Login required' });
         }
         req.user = user;
