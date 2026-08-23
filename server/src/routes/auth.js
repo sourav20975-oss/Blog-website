@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { generateCaptcha, verifyCaptcha } = require('../utils/captcha');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -40,11 +41,19 @@ async function resolveRole(email) {
   return 'user';
 }
 
-// ---- Signup (email + password -> turant account ban jata hai) ----
+// ---- Captcha ----
+router.get('/captcha', (req, res) => {
+  res.json(generateCaptcha());
+});
+
+// ---- Signup (email + password + captcha -> turant account ban jata hai) ----
 router.post('/signup', async (req, res, next) => {
   try {
-    const { name, email, password } = req.body || {};
+    const { name, email, password, captchaId, captchaText } = req.body || {};
 
+    if (!verifyCaptcha(captchaId, captchaText)) {
+      return res.status(400).json({ message: 'Incorrect captcha — try the new one', captchaFailed: true });
+    }
     if (!name || String(name).trim().length < 2) {
       return res.status(400).json({ message: 'Name must be at least 2 characters' });
     }
@@ -82,8 +91,11 @@ router.post('/signup', async (req, res, next) => {
 // ---- Login ----
 router.post('/login', async (req, res, next) => {
   try {
-    const { email, password } = req.body || {};
+    const { email, password, captchaId, captchaText } = req.body || {};
 
+    if (!verifyCaptcha(captchaId, captchaText)) {
+      return res.status(400).json({ message: 'Incorrect captcha — try the new one', captchaFailed: true });
+    }
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are both required' });
     }

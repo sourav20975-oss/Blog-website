@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../api';
+import Captcha from '../components/Captcha';
 import { useAuth } from '../AuthContext';
 
 export default function Login() {
@@ -8,20 +9,36 @@ export default function Login() {
   const location = useLocation();
   const { loginSession } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [captchaId, setCaptchaId] = useState(null);
+  const [captchaText, setCaptchaText] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const refreshCaptcha = () => {
+    setCaptchaId(null);
+    setCaptchaText('');
+    setRefreshKey((k) => k + 1);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaId) {
+      setError('Captcha is loading — please wait a second');
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await login({
         email: form.email,
         password: form.password,
+        captchaId,
+        captchaText,
       });
       loginSession(res.token, res.user);
       navigate(location.state?.from || '/');
     } catch (err) {
+      if (err.message.toLowerCase().includes('captcha')) refreshCaptcha();
       setError(err.message);
     } finally {
       setSubmitting(false);
@@ -79,6 +96,18 @@ export default function Login() {
               className={inputClass}
             />
           </div>
+
+          <Captcha
+            value={captchaText}
+            onChange={(v) => {
+              setError('');
+              setCaptchaText(v);
+            }}
+            onError={setError}
+            onLoaded={setCaptchaId}
+            refreshKey={refreshKey}
+            onRefresh={refreshCaptcha}
+          />
 
           <button
             type="submit"
