@@ -55,8 +55,9 @@ async function issueAndSendOtp(user) {
   user.otpExpiresAt = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
   await user.save();
   const { delivered } = await sendOtpMail(user.email, user.name, otp);
-  // SMTP configured nahi hai to dev testing ke liye OTP response me bhej do
-  return { delivered, devOtp: delivered ? undefined : otp };
+  // devOtp sirf LOCAL development ke liye - production me kabhi response me nahi jata
+  const isDev = process.env.NODE_ENV !== 'production';
+  return { delivered, devOtp: !delivered && isDev ? otp : undefined };
 }
 
 // ---- Captcha ----
@@ -106,7 +107,7 @@ router.post('/signup', async (req, res, next) => {
 
     const { delivered, devOtp } = await issueAndSendOtp(user);
     res.status(201).json({
-      message: isConfigured() && delivered
+      message: delivered
         ? `OTP ${normalizedEmail} par bhej diya — 10 min me verify karo`
         : 'OTP generated (SMTP not configured — server console check karo)',
       email: normalizedEmail,
