@@ -107,6 +107,14 @@ const SEED_POSTS = [
       'What causes ZeroDivisionError and two standard fixes — try/except for user input and if-guards before dividing — plus how to trace hidden division bugs in big codebases.',
     file: 'python-zero-division.md',
   },
+  {
+    title: 'The Ultimate Next.js Roadmap — From Zero to Full Stack',
+    slug: 'ultimate-nextjs-roadmap',
+    author: 'Sourav Kumar',
+    quote:
+      'A complete Next.js roadmap — App Router, dynamic routes, TypeScript, API routes, data fetching, and two full-stack practice projects with MongoDB, NextAuth and Cloudinary.',
+    file: 'nextjs-complete-roadmap.md',
+  },
 ];
 
 function getContent(file) {
