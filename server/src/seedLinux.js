@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { connectDB } = require('./db');
 const Post = require('./models/Post');
+const { store: storeContent } = require('./utils/contentCodec');
 
 async function main() {
   await connectDB();
@@ -19,13 +20,13 @@ async function main() {
     author: 'Sourav Kumar',
     quote:
       'Complete source-faithful Markdown transcription of the Linux handbook — kernel, distro, commands, users, permissions, processes, cron, filesystem, Nginx and file transfer, page by page.',
-    content,
+    content: storeContent(content),
   };
 
   const existing = await Post.findOne({ slug });
 
   if (existing) {
-    await Post.findOneAndUpdate({ slug }, { content }, { new: true, runValidators: true });
+    await Post.findOneAndUpdate({ slug }, { content: storeContent(content) }, { new: true, runValidators: true });
     console.log('Linux handbook content updated:', slug);
   } else {
     await Post.create(meta);
