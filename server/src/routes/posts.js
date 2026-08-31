@@ -4,13 +4,29 @@ const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/posts - list (without full content for speed)
+// GET /api/posts?page=1&limit=6&q=react - paginated list (content ke bina, fast)
 router.get('/', async (req, res) => {
   try {
-    const posts = await Post.find()
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 6));
+    const q = String(req.query.q || '').trim();
+
+    const filter = {};
+    if (q) {
+      // regex special chars escape taaki search crash na ho
+      const safe = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const rx = new RegExp(safe, 'i');
+      filter.$or = [{ title: rx }, { author: rx }];
+    }
+
+    const total = await Post.countDocuments(filter);
+    const posts = await Post.find(filter)
       .select('-content')
-      .sort({ updatedAt: -1 });
-    res.json(posts);
+      .sort({ updatedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.json({ posts, total, page, pages: Math.ceil(total / limit) || 1, limit });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

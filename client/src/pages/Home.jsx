@@ -4,19 +4,34 @@ import { fetchPosts, deletePost } from '../api';
 import PostCard from '../components/PostCard';
 import { useAuth } from '../AuthContext';
 
+const PAGE_SIZE = 6;
+
 export default function Home() {
-  const [posts, setPosts] = useState(null);
+  const [data, setData] = useState(null); // { posts, total, page, pages }
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+  const [debouncedQ, setDebouncedQ] = useState('');
+  const [page, setPage] = useState(1);
   const { isAdmin } = useAuth();
 
+  // Search box debounce — har keystroke pe API na chale
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ(query.trim()), 300);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  // Naya search = wapas page 1
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQ]);
+
   const load = () => {
-    fetchPosts()
-      .then(setPosts)
+    fetchPosts({ page, limit: PAGE_SIZE, q: debouncedQ })
+      .then(setData)
       .catch((e) => setError(e.message));
   };
 
-  useEffect(load, []);
+  useEffect(load, [page, debouncedQ]);
 
   const handleDelete = async (post) => {
     if (!window.confirm(`Delete "${post.title}"?`)) return;
@@ -28,11 +43,9 @@ export default function Home() {
     }
   };
 
-  const filtered = (posts || []).filter(
-    (p) =>
-      p.title.toLowerCase().includes(query.toLowerCase()) ||
-      (p.author || '').toLowerCase().includes(query.toLowerCase())
-  );
+  const posts = data?.posts || [];
+  const pages = data?.pages || 1;
+  const total = data?.total || 0;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
@@ -85,7 +98,7 @@ export default function Home() {
         </p>
       )}
 
-      {!posts && !error && (
+      {!data && !error && (
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-pulse overflow-hidden rounded-xl border border-borderc bg-card">
@@ -100,16 +113,61 @@ export default function Home() {
         </div>
       )}
 
-      {posts && filtered.length === 0 && (
+      {data && posts.length === 0 && (
         <p className="mt-10 text-center text-zinc-500">No posts found.</p>
       )}
 
-      {filtered.length > 0 && (
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((post) => (
-            <PostCard key={post.slug} post={post} onDelete={isAdmin ? handleDelete : null} />
-          ))}
-        </div>
+      {posts.length > 0 && (
+        <>
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <PostCard key={post.slug} post={post} onDelete={isAdmin ? handleDelete : null} />
+            ))}
+          </div>
+
+          {pages > 1 && (
+            <nav className="mt-12 flex items-center justify-center gap-2" aria-label="Pagination">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="rounded-lg border border-borderc bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-orange-400 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ← Prev
+              </button>
+
+              {[...Array(pages)].map((_, i) => {
+                const n = i + 1;
+                const active = n === page;
+                return (
+                  <button
+                    key={n}
+                    onClick={() => setPage(n)}
+                    className={
+                      active
+                        ? 'min-w-[40px] rounded-lg bg-orange-500 px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-orange-500/30'
+                        : 'min-w-[40px] rounded-lg border border-borderc bg-card px-3 py-2 text-sm font-medium transition-colors hover:border-orange-400'
+                    }
+                  >
+                    {n}
+                  </button>
+                );
+              })}
+
+              <button
+                onClick={() => setPage((p) => Math.min(pages, p + 1))}
+                disabled={page === pages}
+                className="rounded-lg border border-borderc bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-orange-400 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next →
+              </button>
+            </nav>
+          )}
+
+          <p className="mt-6 text-center text-xs text-zinc-500">
+            Showing {posts.length} of {total} post{total === 1 ? '' : 's'}
+            {debouncedQ ? ` for "${debouncedQ}"` : ''} · Page {page}/{pages}
+          </p>
+        </>
       )}
     </main>
   );

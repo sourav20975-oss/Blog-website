@@ -59,8 +59,10 @@ async function timedFetch(url, options = {}, ms = 60000) {
   }
 }
 
-export function fetchPosts() {
-  return timedFetch(`${API_BASE}/api/posts`).then(handle);
+export function fetchPosts({ page = 1, limit = 6, q = '' } = {}) {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (q) params.set('q', q);
+  return timedFetch(`${API_BASE}/api/posts?${params.toString()}`).then(handle);
 }
 
 export function fetchPost(slug) {
@@ -101,6 +103,10 @@ export function uploadImage(file) {
 }
 
 // ---- Auth API ----
+export function getCaptcha() {
+  return timedFetch(`${API_BASE}/api/auth/captcha`).then(handle);
+}
+
 export function signup(data) {
   return timedFetch(`${API_BASE}/api/auth/signup`, {
     method: 'POST',
