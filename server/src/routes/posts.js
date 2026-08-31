@@ -1,6 +1,14 @@
 const express = require('express');
 const Post = require('../models/Post');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { store: storeContent, storePrecompressed } = require('../utils/contentCodec');
+
+// body se content lo; agar client ne pehle se gzip(base64) bheja ho toh usme [GZ] prefix add karke store karo
+function resolveContent(body) {
+  if (body.content === undefined) return undefined;
+  if (body.contentCompressed) return storePrecompressed(body.content);
+  return storeContent(body.content);
+}
 
 const router = express.Router();
 
@@ -61,7 +69,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
       author: req.user.name,
       quote,
       coverImage,
-      content,
+      content: resolveContent(req.body),
     });
     res.status(201).json(post);
   } catch (err) {
@@ -78,7 +86,7 @@ router.put('/:slug', requireAuth, requireAdmin, async (req, res) => {
     if (author !== undefined) update.author = author;
     if (quote !== undefined) update.quote = quote;
     if (coverImage !== undefined) update.coverImage = coverImage;
-    if (content !== undefined) update.content = content;
+    if (content !== undefined) update.content = resolveContent(req.body);
     if (slug !== undefined && slug) update.slug = Post.slugify(slug);
 
     const post = await Post.findOneAndUpdate({ slug: req.params.slug }, update, {

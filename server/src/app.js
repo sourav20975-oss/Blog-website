@@ -34,7 +34,23 @@ function buildApp() {
     })
   );
 
-  app.use(cors());
+  const allowedOrigins = [
+    'https://blog-website-1-ez1y.onrender.com',
+    'https://blog-website-jj8f.onrender.com',
+  ];
+
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true,
+    })
+  );
 
   // General rate limit
   const globalLimiter = rateLimit({
@@ -46,7 +62,7 @@ function buildApp() {
   });
   app.use(globalLimiter);
 
-  app.use(express.json({ limit: '2mb' }));
+  app.use(express.json({ limit: '20mb' }));
 
   // Auth routes pe stricter limit (brute-force protection)
   const authLimiter = rateLimit({
