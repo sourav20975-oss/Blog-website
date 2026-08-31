@@ -34,20 +34,9 @@ function buildApp() {
     })
   );
 
-  const allowedOrigins = [
-    'https://blog-website-1-ez1y.onrender.com',
-    'https://blog-website-jj8f.onrender.com',
-  ];
-
   app.use(
     cors({
-      origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: true,
       credentials: true,
     })
   );
