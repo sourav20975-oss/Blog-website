@@ -12,6 +12,7 @@ import CreatePost from './pages/CreatePost';
 import EditPost from './pages/EditPost';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import HandbookReader from './pages/HandbookReader';
 
 export default function App() {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/blogpost/:slug" element={<BlogPost />} />
             <Route path="/pdfs" element={<PdfLibrary />} />
+            <Route path="/handbook/:id" element={<HandbookReader />} />
             <Route path="/saved" element={<SavedLibrary />} />
             <Route
               path="/create"

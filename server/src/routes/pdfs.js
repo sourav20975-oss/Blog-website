@@ -108,6 +108,9 @@ router.get('/:id/view', async (req, res) => {
         'Content-Length': chunksize,
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="${encodeURIComponent(doc.filename)}"`,
+        'Access-Control-Allow-Origin': '*',
+        'Cross-Origin-Resource-Policy': 'cross-origin',
+        'X-Content-Type-Options': 'nosniff',
       });
 
       const stream = getDownloadStream(doc.fileId, { start, end: end + 1 });
@@ -119,6 +122,9 @@ router.get('/:id/view', async (req, res) => {
         'Content-Type': 'application/pdf',
         'Accept-Ranges': 'bytes',
         'Content-Disposition': `inline; filename="${encodeURIComponent(doc.filename)}"`,
+        'Access-Control-Allow-Origin': '*',
+        'Cross-Origin-Resource-Policy': 'cross-origin',
+        'X-Content-Type-Options': 'nosniff',
       });
 
       const stream = getDownloadStream(doc.fileId);

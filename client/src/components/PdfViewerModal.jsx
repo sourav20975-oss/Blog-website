@@ -51,11 +51,11 @@ export default function PdfViewerModal({ pdf, onClose }) {
             </a>
 
             <a
-              href={viewUrl}
+              href={`/handbook/${pdf._id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl border border-zinc-700 bg-zinc-800 p-2 text-zinc-300 hover:bg-zinc-700 hover:text-white"
-              title="Open in new window"
+              title="Open fullscreen reader"
             >
               <ExternalLink className="h-4 w-4" />
             </a>
@@ -71,20 +71,47 @@ export default function PdfViewerModal({ pdf, onClose }) {
         </div>
 
         {/* Modal Content - Stream Viewer */}
-        <div className="relative flex-1 bg-zinc-950">
+        <div className="relative flex-1 bg-zinc-950 flex flex-col">
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950 text-zinc-400 z-10">
               <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
-              <p className="text-xs">Streaming PDF from MongoDB GridFS...</p>
+              <p className="text-xs">Streaming handbook pages from MongoDB GridFS...</p>
             </div>
           )}
 
-          <iframe
-            src={`${viewUrl}#toolbar=1&navpanes=0`}
-            title={pdf.title}
+          <object
+            data={`${viewUrl}#toolbar=1&navpanes=0`}
+            type="application/pdf"
             className="h-full w-full border-none"
             onLoad={() => setLoading(false)}
-          />
+          >
+            <iframe
+              src={`${viewUrl}#toolbar=1&navpanes=0`}
+              title={pdf.title}
+              className="h-full w-full border-none"
+              onLoad={() => setLoading(false)}
+            />
+          </object>
+
+          {/* Browser shields / blocker banner */}
+          <div className="flex items-center justify-between border-t border-zinc-800/80 bg-zinc-900/90 px-4 py-2 text-xs text-zinc-400">
+            <span>Notice browser blocking the preview?</span>
+            <div className="flex items-center gap-3">
+              <a
+                href={`/handbook/${pdf._id}`}
+                className="font-medium text-orange-400 hover:underline"
+              >
+                Open Fullscreen Reader &rarr;
+              </a>
+              <a
+                href={downloadUrl}
+                download={pdf.filename || 'handbook.pdf'}
+                className="hover:text-zinc-200"
+              >
+                Download PDF
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

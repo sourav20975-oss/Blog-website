@@ -28,6 +28,7 @@ function buildApp() {
       contentSecurityPolicy: false,
       crossOriginResourcePolicy: { policy: 'cross-origin' },
       crossOriginEmbedderPolicy: false,
+      frameguard: false, // Allow cross-origin PDF embedding in iframes from frontend domain
     })
   );
 
