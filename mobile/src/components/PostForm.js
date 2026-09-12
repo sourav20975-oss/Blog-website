@@ -23,6 +23,8 @@ export default function PostForm({ initial, onSubmit, submitting, error }) {
     slug: initial?.slug || '',
     author: initial?.author || 'Sourav Kumar',
     quote: initial?.quote || '',
+    category: initial?.category || 'General',
+    tags: Array.isArray(initial?.tags) ? initial.tags.join(', ') : (initial?.tags || ''),
     coverImage: initial?.coverImage || '',
     content: initial?.content || '',
   });
@@ -193,6 +195,58 @@ export default function PostForm({ initial, onSubmit, submitting, error }) {
         />
       </View>
 
+      {/* Category */}
+      <View style={styles.field}>
+        <Text style={[styles.label, { color: colors.textMuted }]}>Category</Text>
+        <View style={styles.categoryRow}>
+          {[
+            'General',
+            'Web Development',
+            'Programming',
+            'DevOps & Linux',
+            'Cloud & AI',
+            'System Design',
+            'Tutorials',
+          ].map((cat) => {
+            const isSelected = form.category === cat;
+            return (
+              <TouchableOpacity
+                key={cat}
+                onPress={() => setForm((prev) => ({ ...prev, category: cat }))}
+                style={[
+                  styles.catChip,
+                  {
+                    backgroundColor: isSelected ? colors.primary : colors.card,
+                    borderColor: isSelected ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.catChipText,
+                    { color: isSelected ? '#ffffff' : colors.text },
+                  ]}
+                >
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
+      {/* Tags */}
+      <View style={styles.field}>
+        <Text style={[styles.label, { color: colors.textMuted }]}>Tags (comma separated)</Text>
+        <TextInput
+          value={form.tags}
+          onChangeText={(val) => setForm((prev) => ({ ...prev, tags: val }))}
+          placeholder="react, mongodb, tutorial"
+          placeholderTextColor={colors.placeholder}
+          style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
+        />
+      </View>
+
       {/* Content Markdown */}
       <View style={styles.field}>
         <Text style={[styles.label, { color: colors.textMuted }]}>Content (Markdown) *</Text>
@@ -307,5 +361,21 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700',
+  },
+  categoryRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  catChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  catChipText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

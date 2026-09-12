@@ -17,6 +17,8 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import TutorialsScreen from '../screens/TutorialsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import HandbooksScreen from '../screens/HandbooksScreen';
+import SavedScreen from '../screens/SavedScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,17 +52,26 @@ function MainTabs() {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Articles',
           tabBarIcon: ({ color, size }) => <Feather name="home" size={size - 2} color={color} />,
         }}
       />
 
       <Tab.Screen
-        name="Tutorials"
-        component={TutorialsScreen}
+        name="Handbooks"
+        component={HandbooksScreen}
         options={{
-          tabBarLabel: 'Explore',
-          tabBarIcon: ({ color, size }) => <Feather name="compass" size={size - 2} color={color} />,
+          tabBarLabel: 'Handbooks',
+          tabBarIcon: ({ color, size }) => <Feather name="book-open" size={size - 2} color={color} />,
+        }}
+      />
+
+      <Tab.Screen
+        name="Saved"
+        component={SavedScreen}
+        options={{
+          tabBarLabel: 'Saved',
+          tabBarIcon: ({ color, size }) => <Feather name="bookmark" size={size - 2} color={color} />,
         }}
       />
 
