@@ -7,13 +7,13 @@ const rateLimit = require('express-rate-limit');
 const postsRouter = require('./routes/posts');
 const uploadRouter = require('./routes/upload');
 const authRouter = require('./routes/auth');
+const pdfsRouter = require('./routes/pdfs');
+const bookmarksRouter = require('./routes/bookmarks');
 const path = require('path');
 const dns = require('dns');
 
+dns.setServers(['1.1.1.1', '8.8.8.8']);
 
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
-
-// Render containers me outbound IPv6 nahi hai — Gmail SMTP IPv4 se hi connect hoga
 if (typeof dns.setDefaultResultOrder === 'function') {
   dns.setDefaultResultOrder('ipv4first');
 }
@@ -21,11 +21,8 @@ if (typeof dns.setDefaultResultOrder === 'function') {
 function buildApp() {
   const app = express();
 
-  // Render ke reverse proxy ke peeche sahi IP ke liye (rate limiting accurate rahe)
   app.set('trust proxy', 1);
 
-  // Security headers. CSP off (API + cross-origin images), CORP cross-origin taaki
-  // /uploads ki images frontend domain se load ho sakein.
   app.use(
     helmet({
       contentSecurityPolicy: false,
@@ -44,16 +41,17 @@ function buildApp() {
   // General rate limit
   const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 500,
+    max: 1000,
     standardHeaders: true,
     legacyHeaders: false,
     message: { message: 'Too many requests — please slow down' },
   });
   app.use(globalLimiter);
 
-  app.use(express.json({ limit: '2mb' }));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Auth routes pe stricter limit (brute-force protection)
+  // Auth rate limiter
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 50,
@@ -62,17 +60,23 @@ function buildApp() {
     message: { message: 'Auth attempt limit reached — try again in 15 minutes' },
   });
 
+  // Static uploads directory for local fallback
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-  app.get('/api/health', (req, res) => res.json({ ok: true }));
+
+  // Routes
+  app.get('/api/health', (req, res) => res.json({ ok: true, timestamp: new Date() }));
   app.use('/api/auth', authLimiter, authRouter);
   app.use('/api/posts', postsRouter);
+  app.use('/api/pdfs', pdfsRouter);
   app.use('/api/upload', uploadRouter);
+  app.use('/api/bookmarks', bookmarksRouter);
 
   app.use((req, res) => res.status(404).json({ message: 'Route not found' }));
   app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).json({ message: err.message });
+    console.error('Server error handler:', err);
+    res.status(500).json({ message: err.message || 'Internal server error' });
   });
+
   return app;
 }
 

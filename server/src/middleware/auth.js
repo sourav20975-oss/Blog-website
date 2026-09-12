@@ -24,7 +24,6 @@ function requireAuth(req, res, next) {
   }
 }
 
-// Login ke BAAD role check — sirf admin aage badh sakta hai
 function requireAdmin(req, res, next) {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Admin access required' });
@@ -32,4 +31,22 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-module.exports = { requireAuth, requireAdmin };
+function optionalAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return next();
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    User.findById(payload.id)
+      .select('-passwordHash')
+      .then((user) => {
+        if (user) req.user = user;
+        next();
+      })
+      .catch(() => next());
+  } catch {
+    next();
+  }
+}
+
+module.exports = { requireAuth, requireAdmin, optionalAuth };

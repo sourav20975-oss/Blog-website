@@ -1,5 +1,3 @@
-// Dev me vite proxy use hota hai (''). Production build me Render backend URL.
-// VITE_API_URL se override bhi kar sakte ho.
 const API_BASE =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'https://blog-website-jj8f.onrender.com');
 
@@ -29,10 +27,26 @@ export function getStoredUser() {
   }
 }
 
+const SESSION_KEY = 'bv_session_id';
+
+export function getSessionId() {
+  try {
+    let sid = localStorage.getItem(SESSION_KEY);
+    if (!sid) {
+      sid = 'sess_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36);
+      localStorage.setItem(SESSION_KEY, sid);
+    }
+    return sid;
+  } catch {
+    return 'sess_fallback';
+  }
+}
+
 function authHeaders(extra = {}) {
   const token = getToken();
   return {
     ...extra,
+    'x-session-id': getSessionId(),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
@@ -43,7 +57,7 @@ async function handle(res) {
   return data;
 }
 
-// Free-tier servers cold-start slowly — 60s tak wait karo, phir friendly error
+// Timeout fetch wrapper
 async function timedFetch(url, options = {}, ms = 60000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
@@ -51,7 +65,7 @@ async function timedFetch(url, options = {}, ms = 60000) {
     return await fetch(url, { ...options, signal: controller.signal });
   } catch (err) {
     if (err.name === 'AbortError') {
-      throw new Error('Server is taking too long to respond — please try again in a moment');
+      throw new Error('Server response timed out. Please try again.');
     }
     throw err;
   } finally {
@@ -59,9 +73,13 @@ async function timedFetch(url, options = {}, ms = 60000) {
   }
 }
 
-export function fetchPosts({ page = 1, limit = 6, q = '' } = {}) {
+// ================= POSTS API =================
+export function fetchPosts({ page = 1, limit = 6, q = '', category = '', tag = '', sort = 'newest' } = {}) {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
   if (q) params.set('q', q);
+  if (category && category !== 'All') params.set('category', category);
+  if (tag) params.set('tag', tag);
+  if (sort) params.set('sort', sort);
   return timedFetch(`${API_BASE}/api/posts?${params.toString()}`).then(handle);
 }
 
@@ -92,17 +110,167 @@ export function deletePost(slug) {
   }).then(handle);
 }
 
-export function uploadImage(file) {
-  const fd = new FormData();
-  fd.append('image', file);
-  return timedFetch(`${API_BASE}/api/upload`, {
+export function likePost(slug) {
+  return timedFetch(`${API_BASE}/api/posts/${slug}/like`, {
     method: 'POST',
-    headers: authHeaders(),
-    body: fd,
+    headers: { 'Content-Type': 'application/json' },
   }).then(handle);
 }
 
-// ---- Auth API ----
+// ================= COMMENTS API =================
+export function fetchComments(slug) {
+  return timedFetch(`${API_BASE}/api/posts/${slug}/comments`).then(handle);
+}
+
+export function createComment(slug, data) {
+  return timedFetch(`${API_BASE}/api/posts/${slug}/comments`, {
+    method: 'POST',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify(data),
+  }).then(handle);
+}
+
+export function deleteComment(slug, commentId) {
+  return timedFetch(`${API_BASE}/api/posts/${slug}/comments/${commentId}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  }).then(handle);
+}
+
+// ================= BOOKMARKS API (MongoDB Persistent) =================
+export function fetchBookmarksApi() {
+  return timedFetch(`${API_BASE}/api/bookmarks`, {
+    headers: authHeaders(),
+  }).then(handle);
+}
+
+export function toggleBookmarkApi(data) {
+  return timedFetch(`${API_BASE}/api/bookmarks/toggle`, {
+    method: 'POST',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify(data),
+  }).then(handle);
+}
+
+export function clearBookmarksApi() {
+  return timedFetch(`${API_BASE}/api/bookmarks/clear`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  }).then(handle);
+}
+
+// ================= PDF DOCUMENTS API (GridFS 50MB) =================
+export function fetchPdfs({ page = 1, limit = 9, q = '', category = '', sort = 'newest' } = {}) {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (q) params.set('q', q);
+  if (category && category !== 'All') params.set('category', category);
+  if (sort) params.set('sort', sort);
+  return timedFetch(`${API_BASE}/api/pdfs?${params.toString()}`).then(handle);
+}
+
+export function fetchPdf(id) {
+  return timedFetch(`${API_BASE}/api/pdfs/${id}`).then(handle);
+}
+
+export function getPdfViewUrl(id) {
+  return `${API_BASE}/api/pdfs/${id}/view`;
+}
+
+export function getPdfDownloadUrl(id) {
+  return `${API_BASE}/api/pdfs/${id}/download`;
+}
+
+// Upload PDF with progress support (XHR for up to 50MB files)
+export function uploadPdf(formData, onProgress = null) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE}/api/pdfs`);
+
+    const token = getToken();
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    if (xhr.upload && onProgress) {
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          onProgress(percent);
+        }
+      };
+    }
+
+    xhr.onload = () => {
+      try {
+        const res = JSON.parse(xhr.responseText || '{}');
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(res);
+        } else {
+          reject(new Error(res.message || `Upload failed with status ${xhr.status}`));
+        }
+      } catch {
+        reject(new Error(`Upload failed (${xhr.status})`));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network error during PDF upload'));
+    xhr.send(formData);
+  });
+}
+
+export function updatePdf(id, data) {
+  return timedFetch(`${API_BASE}/api/pdfs/${id}`, {
+    method: 'PUT',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify(data),
+  }).then(handle);
+}
+
+export function deletePdf(id) {
+  return timedFetch(`${API_BASE}/api/pdfs/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  }).then(handle);
+}
+
+// ================= IMAGE UPLOAD API (Cloudinary + Local) =================
+// Used for blog cover, pdf cover, and in-editor markdown inline images
+export function uploadImage(file, onProgress = null) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE}/api/upload`);
+
+    const token = getToken();
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    if (xhr.upload && onProgress) {
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          onProgress(percent);
+        }
+      };
+    }
+
+    xhr.onload = () => {
+      try {
+        const res = JSON.parse(xhr.responseText || '{}');
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(res);
+        } else {
+          reject(new Error(res.message || 'Image upload failed'));
+        }
+      } catch {
+        reject(new Error('Image upload failed'));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network error uploading image'));
+    const fd = new FormData();
+    fd.append('image', file);
+    xhr.send(fd);
+  });
+}
+
+// ================= AUTH API =================
 export function getCaptcha() {
   return timedFetch(`${API_BASE}/api/auth/captcha`).then(handle);
 }

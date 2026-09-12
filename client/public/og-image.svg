@@ -1,0 +1,86 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark Slate Background Gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0E0E12" />
+      <stop offset="100%" stop-color="#070709" />
+    </linearGradient>
+
+    <!-- Ambient Glow Gradient -->
+    <radialGradient id="glow" cx="600" cy="200" r="500" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF5500" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#FF5500" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Logo Gradients -->
+    <linearGradient id="bv-ember" x1="8" y1="8" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF7A1A" />
+      <stop offset="50%" stop-color="#FF5500" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+    <linearGradient id="bv-gold" x1="12" y1="6" x2="28" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="100%" stop-color="#FB923C" />
+    </linearGradient>
+    <linearGradient id="bv-border" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0.4)" />
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.1)" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Ambient Light Center -->
+  <circle cx="600" cy="220" r="450" fill="url(#glow)" />
+
+  <!-- Subtle Engineering Grid Lines -->
+  <g opacity="0.07" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="105" x2="1200" y2="105" />
+    <line x1="0" y1="210" x2="1200" y2="210" />
+    <line x1="0" y1="315" x2="1200" y2="315" />
+    <line x1="0" y1="420" x2="1200" y2="420" />
+    <line x1="0" y1="525" x2="1200" y2="525" />
+    <line x1="200" y1="0" x2="200" y2="630" />
+    <line x1="400" y1="0" x2="400" y2="630" />
+    <line x1="600" y1="0" x2="600" y2="630" />
+    <line x1="800" y1="0" x2="800" y2="630" />
+    <line x1="1000" y1="0" x2="1000" y2="630" />
+  </g>
+
+  <!-- Logo Emblem Center (Scale 2.5x) -->
+  <g transform="translate(550, 120) scale(2.5)">
+    <rect x="1" y="1" width="38" height="38" rx="11" fill="#18181E" stroke="url(#bv-border)" stroke-width="1.2" />
+    <path d="M13 13.5L8.5 20L13 26.5" stroke="url(#bv-gold)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M27 13.5L31.5 20L27 26.5" stroke="url(#bv-gold)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M16 16.5L20 25.5L24 16.5" stroke="url(#bv-ember)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="20" cy="14" r="1.75" fill="#FFAA44" />
+  </g>
+
+  <!-- Brand Title -->
+  <text x="600" y="300" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="56" font-weight="800" fill="#FFFFFF" letter-spacing="-1.5">
+    Blog<tspan fill="#FF7A1A">Verse</tspan>
+  </text>
+
+  <!-- Tagline / Headline -->
+  <text x="600" y="365" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="28" font-weight="600" fill="#E4E4E7" letter-spacing="-0.5">
+    Practical Engineering Notes &amp; Reference Handbooks
+  </text>
+
+  <!-- Sub-Description -->
+  <text x="600" y="415" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="20" font-weight="400" fill="#A1A1AA">
+    Linux Systems &middot; Database Architecture &middot; Backend Engineering &middot; Downloadable Handbooks
+  </text>
+
+  <!-- Pill Tags at Bottom -->
+  <g transform="translate(360, 480)">
+    <rect x="0" y="0" width="130" height="38" rx="10" fill="#18181E" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+    <text x="65" y="24" text-anchor="middle" font-family="monospace" font-size="14" fill="#E4E4E7">#Linux</text>
+
+    <rect x="150" y="0" width="150" height="38" rx="10" fill="#18181E" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+    <text x="225" y="24" text-anchor="middle" font-family="monospace" font-size="14" fill="#E4E4E7">#PostgreSQL</text>
+
+    <rect x="320" y="0" width="160" height="38" rx="10" fill="#18181E" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+    <text x="400" y="24" text-anchor="middle" font-family="monospace" font-size="14" fill="#E4E4E7">#Handbooks</text>
+  </g>
+</svg>

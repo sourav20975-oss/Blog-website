@@ -8,46 +8,113 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ---- Theme variables (rgb triplets for Tailwind alpha support) ---- */
+/* Theme variables (rgb triplets) */
 :root {
-  --surface: 248 250 252; /* light page bg   */
-  --card: 255 255 255; /* light card bg   */
-  --borderc: 228 228 231; /* light borders   */
+  --surface: 250 251 253; /* crisp off-white background */
+  --card: 255 255 255;    /* pure white surface */
+  --borderc: 228 231 236; /* refined subtle border */
 }
 
 .dark {
-  --surface: 10 10 11; /* dark page bg    */
-  --card: 20 20 23; /* dark card bg    */
-  --borderc: 39 39 42; /* dark borders    */
+  --surface: 11 11 13;   /* deep, premium slate-black */
+  --card: 18 18 21;       /* elevated dark card surface */
+  --borderc: 34 34 39;    /* sleek, subtle border */
 }
 
 body {
-  @apply bg-surface text-zinc-900 antialiased transition-colors duration-200 dark:text-zinc-100;
+  @apply bg-surface text-zinc-900 antialiased transition-colors duration-200 dark:text-zinc-100 font-sans;
 }
 
-::selection {
-  @apply bg-orange-500/30;
+/* Subtle engineering background grid */
+.bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(120, 120, 120, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(120, 120, 120, 0.06) 1px, transparent 1px);
+}
+.dark .bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
-/* article styling — code blocks dono themes me dark hi rehte hain (GitHub style) */
-.blog-content :is(h2) {
-  @apply mt-10 border-b border-borderc pb-2 text-2xl font-bold sm:text-3xl;
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
-.blog-content :is(h3) {
-  @apply mt-8 text-xl font-semibold sm:text-2xl;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-.blog-content :is(h4) {
-  @apply mt-6 text-lg font-semibold sm:text-xl;
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--borderc));
+  border-radius: 9999px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.5);
+}
+
+/* Editorial prose styling for engineering articles */
+.blog-content {
+  @apply text-zinc-800 dark:text-zinc-200 text-base leading-relaxed tracking-normal font-sans;
+}
+
+.blog-content :is(h1, h2, h3, h4, h5, h6) {
+  @apply text-zinc-900 dark:text-zinc-50 font-bold tracking-tight;
+}
+
+.blog-content h1 {
+  @apply mt-12 mb-4 text-2xl font-extrabold sm:text-3xl;
+}
+
+.blog-content h2 {
+  @apply mt-12 mb-4 border-b border-borderc pb-2.5 text-xl font-bold sm:text-2xl;
+}
+
+.blog-content h3 {
+  @apply mt-8 mb-3 text-lg font-semibold sm:text-xl;
+}
+
+.blog-content h4 {
+  @apply mt-6 mb-2 text-base font-semibold sm:text-lg;
+}
+
+.blog-content p {
+  @apply my-4 text-zinc-700 dark:text-zinc-300 leading-[1.8];
+}
+
+.blog-content ul {
+  @apply my-4 list-disc list-inside space-y-2 text-zinc-700 dark:text-zinc-300;
+}
+
+.blog-content ol {
+  @apply my-4 list-decimal list-inside space-y-2 text-zinc-700 dark:text-zinc-300;
+}
+
+.blog-content li > p {
+  @apply inline my-0;
+}
+
 .blog-content pre {
-  @apply overflow-x-auto rounded-lg border border-borderc p-4 text-sm leading-relaxed;
+  @apply my-6 overflow-x-auto rounded-xl border border-borderc bg-zinc-950 p-4 text-sm font-mono leading-relaxed shadow-sm;
 }
+
 .blog-content code:not(pre code) {
-  @apply rounded bg-zinc-100 px-1.5 py-0.5 text-[0.85em] font-medium text-orange-600 dark:bg-zinc-800 dark:text-orange-300;
+  @apply rounded-md bg-zinc-100 dark:bg-zinc-800/80 px-1.5 py-0.5 font-mono text-[0.85em] font-medium text-orange-600 dark:text-orange-400;
 }
+
 .blog-content blockquote {
-  @apply border-l-4 border-orange-500 pl-4 italic text-zinc-600 dark:text-zinc-400;
+  @apply my-5 border-l-4 border-orange-500 pl-4 py-1.5 italic text-zinc-600 dark:text-zinc-400 bg-orange-500/5 rounded-r-xl;
 }
+
+.blog-content table {
+  @apply my-8 w-full border-collapse overflow-hidden rounded-xl border border-borderc text-sm;
+}
+
 .blog-content table th {
-  @apply bg-zinc-100 dark:bg-zinc-800/60;
+  @apply border border-borderc bg-zinc-100/75 dark:bg-zinc-900/80 p-3 text-left font-semibold text-zinc-900 dark:text-zinc-100;
+}
+
+.blog-content table td {
+  @apply border border-borderc p-3 text-zinc-700 dark:text-zinc-300;
 }

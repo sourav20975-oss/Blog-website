@@ -12,19 +12,18 @@ const ALLOWED = {
   'image/png': '.png',
   'image/gif': '.gif',
   'image/webp': '.webp',
+  'image/svg+xml': '.svg',
 };
 
-// memory storage - buffer ko cloudinary ya local me bhejenge
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB images
   fileFilter: (req, file, cb) => {
     if (ALLOWED[file.mimetype]) return cb(null, true);
-    cb(new Error('Only JPG, PNG, GIF, WEBP images are allowed'));
+    cb(new Error('Only JPG, PNG, GIF, WEBP and SVG images are allowed'));
   },
 });
 
-// ---- Cloudinary (agar .env me credentials hain) ----
 let cloudinary = null;
 function getCloudinary() {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
@@ -41,12 +40,18 @@ function getCloudinary() {
   return cloudinary;
 }
 
-function uploadToCloudinary(buffer, mimetype) {
+function uploadToCloudinary(buffer, mimetype, originalname = 'image') {
   const cld = getCloudinary();
   const folder = process.env.CLOUDINARY_FOLDER || 'blogverse';
+  const cleanName = path.parse(originalname).name.replace(/[^a-zA-Z0-9_-]/g, '_');
+
   return new Promise((resolve, reject) => {
     const stream = cld.uploader.upload_stream(
-      { folder, resource_type: 'image', format: ALLOWED[mimetype]?.replace('.', '') },
+      {
+        folder,
+        resource_type: 'image',
+        public_id: `${cleanName}_${Date.now()}`,
+      },
       (err, result) => {
         if (err) reject(err);
         else resolve(result.secure_url);
@@ -56,29 +61,34 @@ function uploadToCloudinary(buffer, mimetype) {
   });
 }
 
-// ---- Local fallback (credentials nahi hain toh) ----
 function saveLocal(buffer, mimetype) {
   const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
   if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-  const name = crypto.randomBytes(8).toString('hex') + (ALLOWED[mimetype] || '.bin');
+  const ext = ALLOWED[mimetype] || '.jpg';
+  const name = crypto.randomBytes(12).toString('hex') + ext;
   fs.writeFileSync(path.join(UPLOAD_DIR, name), buffer);
   return `/uploads/${name}`;
 }
 
-// POST /api/upload - single image, field name: "image" (auth required)
+// POST /api/upload - Single image upload (cover or in-article markdown inline image)
 router.post('/', requireAuth, requireAdmin, upload.single('image'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: 'No image found' });
+    if (!req.file) return res.status(400).json({ message: 'No image file provided' });
 
     let url;
     if (getCloudinary()) {
-      url = await uploadToCloudinary(req.file.buffer, req.file.mimetype);
+      url = await uploadToCloudinary(req.file.buffer, req.file.mimetype, req.file.originalname);
     } else {
       url = saveLocal(req.file.buffer, req.file.mimetype);
     }
-    res.status(201).json({ url });
+
+    res.status(201).json({
+      url,
+      filename: req.file.originalname,
+      size: req.file.size,
+    });
   } catch (err) {
-    console.error('Upload failed:', err.message);
+    console.error('Image upload failed:', err.message);
     res.status(500).json({ message: 'Upload failed: ' + err.message });
   }
 });

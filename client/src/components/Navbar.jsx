@@ -2,34 +2,28 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { applyTheme, getStoredTheme } from '../theme';
 import { useAuth } from '../AuthContext';
+import { getTotalSavedCount } from '../utils/bookmarks';
+import {
+  Sun,
+  Moon,
+  Menu,
+  X,
+  BookOpen,
+  Plus,
+  LogOut,
+  LogIn,
+  User,
+  Shield,
+  Search,
+  Bookmark,
+} from 'lucide-react';
 
-function SunIcon() {
-  return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.36 6.36l-1.42-1.42M7.05 7.05L5.64 5.64m12.72 0l-1.42 1.41M7.05 16.95l-1.41 1.41M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-      />
-    </svg>
-  );
-}
+import Logo from './Logo';
 
-function MoonIcon() {
-  return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
-      />
-    </svg>
-  );
-}
-
-export default function Navbar() {
+export default function Navbar({ onOpenCommand }) {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState(getStoredTheme);
+  const [savedCount, setSavedCount] = useState(0);
   const { user, isLoggedIn, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -38,7 +32,13 @@ export default function Navbar() {
     navigate('/');
   };
 
-  // Agar user OS se theme badle aur localStorage me choice save na ho
+  useEffect(() => {
+    setSavedCount(getTotalSavedCount());
+    const handleBookmarkChange = () => setSavedCount(getTotalSavedCount());
+    window.addEventListener('bv:bookmarks-changed', handleBookmarkChange);
+    return () => window.removeEventListener('bv:bookmarks-changed', handleBookmarkChange);
+  }, []);
+
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const onChange = (e) => {
@@ -65,112 +65,184 @@ export default function Navbar() {
   };
 
   const linkClass = ({ isActive }) =>
-    `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+    `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
       isActive
-        ? 'text-orange-500 bg-orange-500/10 dark:text-orange-400'
-        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-900/5 dark:text-zinc-300 dark:hover:text-white dark:hover:bg-white/10'
+        ? 'text-zinc-900 bg-zinc-100 dark:text-white dark:bg-zinc-800'
+        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/70 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800/60'
     }`;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-borderc bg-surface/80 backdrop-blur-md supports-[backdrop-filter]:bg-surface/60">
+    <header className="sticky top-0 z-40 border-b border-borderc bg-surface/90 backdrop-blur-md">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2 text-lg font-bold" onClick={() => setOpen(false)}>
-          <span className="rounded-lg bg-orange-500 px-2 py-1 font-mono text-sm text-white shadow-sm shadow-orange-500/30">
-            &lt;/&gt;
-          </span>
-          Blog<span className="text-orange-500 dark:text-orange-400">Verse</span>
-        </Link>
+        {/* Brand Logo - clean and authoritative */}
+        <div className="flex items-center gap-6 lg:gap-8">
+          <Link
+            to="/"
+            className="group flex items-center"
+            onClick={() => setOpen(false)}
+          >
+            <Logo size="md" />
+          </Link>
 
-        <div className="flex items-center gap-1 sm:gap-2">
-          <div className="hidden items-center gap-1 sm:flex">
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-1">
             <NavLink to="/" className={linkClass} end>
-              Home
+              Articles
             </NavLink>
-            {isAdmin ? (
-              <NavLink to="/create" className={linkClass}>
-                New Post
-              </NavLink>
-            ) : null}
-          </div>
-
-          {isLoggedIn ? (
-            <>
-              <span className="hidden max-w-[10rem] truncate rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-600 dark:text-orange-400 md:block">
-                {user.name}
+            <NavLink to="/pdfs" className={linkClass}>
+              Handbooks &amp; Notes
+            </NavLink>
+            <NavLink to="/saved" className={linkClass}>
+              <span className="flex items-center gap-1.5">
+                <Bookmark className="h-3.5 w-3.5" />
+                <span>Saved</span>
+                {savedCount > 0 && (
+                  <span className="rounded-full bg-orange-500/20 px-1.5 py-0.2 text-[10px] font-bold text-orange-600 dark:text-orange-400">
+                    {savedCount}
+                  </span>
+                )}
               </span>
+            </NavLink>
+            {isAdmin && (
+              <NavLink to="/create" className={linkClass}>
+                <span className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Write</span>
+                </span>
+              </NavLink>
+            )}
+          </div>
+        </div>
+
+        {/* Center/Right Command Palette Search Trigger */}
+        <div className="flex items-center gap-2.5">
+          {onOpenCommand && (
+            <button
+              onClick={onOpenCommand}
+              className="flex items-center gap-2 rounded-xl border border-borderc bg-zinc-100/70 dark:bg-zinc-800/60 px-2.5 py-1.5 text-xs text-zinc-500 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+              title="Open Command Palette (Ctrl+K / ⌘K)"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline text-zinc-400">Search...</span>
+              <kbd className="hidden sm:inline-block rounded border border-borderc bg-card px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
+                ⌘K
+              </kbd>
+            </button>
+          )}
+
+          {/* User Auth or Sign Up */}
+          {isLoggedIn ? (
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-borderc bg-card px-2.5 py-1 text-xs text-zinc-700 dark:text-zinc-300">
+                {isAdmin && <Shield className="h-3 w-3 text-orange-500" />}
+                <span className="font-semibold truncate max-w-[110px]">{user.name}</span>
+                {isAdmin && (
+                  <span className="text-[10px] text-orange-500 font-bold uppercase tracking-wider">
+                    admin
+                  </span>
+                )}
+              </div>
               <button
                 onClick={handleLogout}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-red-50 hover:text-red-500 dark:text-zinc-300 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+                className="flex items-center gap-1 rounded-lg border border-borderc px-2.5 py-1 text-xs font-medium text-zinc-600 hover:text-red-500 dark:text-zinc-400 dark:hover:text-red-400 transition-colors"
+                title="Log out"
               >
-                Logout
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Logout</span>
               </button>
-            </>
+            </div>
           ) : (
-            <>
+            <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:text-orange-500 dark:text-zinc-300 dark:hover:text-orange-400"
+                className="px-2.5 py-1 text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
               >
-                Login
+                Log In
               </Link>
               <Link
                 to="/signup"
-                className="rounded-lg bg-orange-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm shadow-orange-500/30 transition-all hover:bg-orange-600 active:scale-[0.98]"
+                className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 Sign Up
               </Link>
-            </>
+            </div>
           )}
 
+          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-            className="ml-1 rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-900/5 hover:text-orange-500 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-orange-400"
+            aria-label="Toggle Theme"
+            className="rounded-lg border border-borderc p-1.5 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
           >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
+          {/* Mobile Menu Button */}
           <button
-            className="rounded-lg p-2 text-zinc-600 hover:bg-zinc-900/5 dark:text-zinc-300 dark:hover:bg-white/10 sm:hidden"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
+            className="rounded-lg border border-borderc p-1.5 text-zinc-600 dark:text-zinc-400 md:hidden"
           >
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              {open ? (
-                <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
       </nav>
 
+      {/* Mobile Menu Drawer */}
       {open && (
-        <div className="border-t border-borderc px-4 pb-3 pt-2 sm:hidden">
-          <NavLink to="/" className={`${linkClass({ isActive: false })} block`} end onClick={() => setOpen(false)}>
-            Home
-          </NavLink>
-          {isAdmin && (
-            <>
+        <div className="border-t border-borderc bg-card px-4 pb-4 pt-2 md:hidden">
+          <div className="space-y-1">
+            <NavLink
+              to="/"
+              className={linkClass}
+              end
+              onClick={() => setOpen(false)}
+            >
+              Articles
+            </NavLink>
+            <NavLink
+              to="/pdfs"
+              className={linkClass}
+              onClick={() => setOpen(false)}
+            >
+              Handbooks &amp; Notes
+            </NavLink>
+            <NavLink
+              to="/saved"
+              className={linkClass}
+              onClick={() => setOpen(false)}
+            >
+              <span className="flex items-center gap-1.5">
+                <Bookmark className="h-3.5 w-3.5" />
+                <span>Saved Vault ({savedCount})</span>
+              </span>
+            </NavLink>
+            {isAdmin && (
               <NavLink
                 to="/create"
-                className={`${linkClass({ isActive: false })} mt-1 block`}
+                className={linkClass}
                 onClick={() => setOpen(false)}
               >
-                New Post
+                Write Post
               </NavLink>
-            </>
-          )}
+            )}
+          </div>
+
           {isLoggedIn && (
-            <button
-              onClick={handleLogout}
-              className="mt-1 block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
-            >
-              Logout ({user.name})
-            </button>
-          )}        </div>
+            <div className="mt-3 border-t border-borderc pt-3 flex items-center justify-between">
+              <span className="text-xs text-zinc-500">{user.name}</span>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  handleLogout();
+                }}
+                className="text-xs font-medium text-red-500 hover:underline"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </header>
   );

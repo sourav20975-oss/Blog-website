@@ -18,3 +18,10 @@ export function applyTheme(theme) {
     /* private mode */
   }
 }
+
+export function toggleTheme() {
+  const current = getStoredTheme();
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  return next;
+}
