@@ -141,12 +141,17 @@ export default function ProfileScreen({ navigation }) {
 
           <View style={styles.infoRow}>
             <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Version</Text>
-            <Text style={[styles.infoVal, { color: colors.text }]}>1.0.0 (Expo SDK 51)</Text>
+            <Text style={[styles.infoVal, { color: colors.text }]}>1.0.0 (Expo SDK 54)</Text>
           </View>
 
           <View style={styles.infoRow}>
-            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Author</Text>
-            <Text style={[styles.infoVal, { color: colors.text }]}>Sourav Kumar</Text>
+            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Platform</Text>
+            <Text style={[styles.infoVal, { color: colors.text }]}>Android & iOS</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Engineering Reference</Text>
+            <Text style={[styles.infoVal, { color: colors.primary, fontWeight: '700' }]}>BlogVerse Open Notes</Text>
           </View>
         </View>
 

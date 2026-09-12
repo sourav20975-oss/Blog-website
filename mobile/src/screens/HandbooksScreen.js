@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -42,9 +42,14 @@ export default function HandbooksScreen({ navigation }) {
   const [query, setQuery] = useState('');
   const [savedIds, setSavedIds] = useState(new Set());
 
+  const hasLoadedRef = useRef(false);
+
   const loadPdfs = useCallback(async (isManual = false) => {
-    if (isManual) setRefreshing(true);
-    else if (pdfs.length === 0) setLoading(true);
+    if (isManual) {
+      setRefreshing(true);
+    } else if (!hasLoadedRef.current) {
+      setLoading(true);
+    }
 
     try {
       const res = await fetchPdfs({ limit: 30, q: query.trim() });
@@ -52,16 +57,25 @@ export default function HandbooksScreen({ navigation }) {
     } catch (err) {
       console.warn('Failed to fetch PDFs:', err.message);
     } finally {
+      hasLoadedRef.current = true;
       setLoading(false);
       setRefreshing(false);
     }
-  }, [query, pdfs.length]);
+  }, [query]);
 
   useFocusEffect(
     useCallback(() => {
-      loadPdfs();
-    }, [loadPdfs])
+      if (hasLoadedRef.current) {
+        fetchPdfs({ limit: 30, q: query.trim() })
+          .then((res) => setPdfs(res.pdfs || []))
+          .catch(() => {});
+      }
+    }, [query])
   );
+
+  useEffect(() => {
+    loadPdfs();
+  }, [loadPdfs]);
 
   useEffect(() => {
     const unsubscribe = subscribeToLiveSync((event) => {

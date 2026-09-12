@@ -4,8 +4,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import Logo from './Logo';
 
-export default function Header({ navigation, showBack = false, title = null }) {
+export default function Header({ navigation, showBack = false, title = null, onSearchPress = null }) {
   const insets = useSafeAreaInsets();
   const { colors, isDark, toggleTheme } = useTheme();
   const { user, isLoggedIn } = useAuth();
@@ -29,7 +30,7 @@ export default function Header({ navigation, showBack = false, title = null }) {
         {
           backgroundColor: colors.surface,
           borderBottomColor: colors.border,
-          paddingTop: Math.max(insets.top, 10),
+          paddingTop: Math.max(insets.top, 12),
         },
       ]}
     >
@@ -41,21 +42,16 @@ export default function Header({ navigation, showBack = false, title = null }) {
               onPress={handleBackPress}
               style={[styles.iconButton, { backgroundColor: colors.card, borderColor: colors.border }]}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              activeOpacity={0.7}
             >
-              <Feather name="arrow-left" size={20} color={colors.text} />
+              <Feather name="arrow-left" size={18} color={colors.text} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               onPress={handleLogoPress}
-              style={styles.brandRow}
               activeOpacity={0.8}
             >
-              <View style={styles.logoBadge}>
-                <Text style={styles.logoBadgeText}>&lt;/&gt;</Text>
-              </View>
-              <Text style={[styles.brandText, { color: colors.text }]}>
-                Blog<Text style={{ color: colors.primary }}>Verse</Text>
-              </Text>
+              <Logo size="md" showText={true} />
             </TouchableOpacity>
           )}
         </View>
@@ -71,6 +67,17 @@ export default function Header({ navigation, showBack = false, title = null }) {
 
         {/* Right Section */}
         <View style={styles.rightContainer}>
+          {onSearchPress && (
+            <TouchableOpacity
+              onPress={onSearchPress}
+              style={[styles.iconButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+              accessibilityLabel="Search"
+              activeOpacity={0.7}
+            >
+              <Feather name="search" size={16} color={colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+
           {isLoggedIn && user?.name && (
             <View style={[styles.userBadge, { backgroundColor: colors.badgeBg, borderColor: colors.primaryBorder }]}>
               <Text style={[styles.userBadgeText, { color: colors.badgeText }]} numberOfLines={1}>
@@ -83,10 +90,11 @@ export default function Header({ navigation, showBack = false, title = null }) {
             onPress={toggleTheme}
             style={[styles.iconButton, { backgroundColor: colors.card, borderColor: colors.border }]}
             accessibilityLabel={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            activeOpacity={0.7}
           >
             <Ionicons
               name={isDark ? 'sunny-outline' : 'moon-outline'}
-              size={18}
+              size={17}
               color={colors.primary}
             />
           </TouchableOpacity>
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   headerContent: {
-    height: 56,
+    height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -111,33 +119,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  logoBadge: {
-    backgroundColor: '#f97316',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
-    shadowColor: '#f97316',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  logoBadgeText: {
-    color: '#ffffff',
-    fontFamily: 'monospace',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  brandText: {
-    fontSize: 18,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-  },
   centerContainer: {
     flex: 1,
     paddingHorizontal: 12,
@@ -146,6 +127,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 15,
     fontWeight: '700',
+    letterSpacing: -0.3,
   },
   rightContainer: {
     flexDirection: 'row',
@@ -153,8 +135,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   userBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 3.5,
     borderRadius: 999,
     borderWidth: 1,
     maxWidth: 90,
@@ -164,9 +146,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+    width: 34,
+    height: 34,
+    borderRadius: 10,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

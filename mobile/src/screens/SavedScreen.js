@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -24,10 +24,14 @@ export default function SavedScreen({ navigation }) {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const hasLoadedRef = useRef(false);
 
   const loadBookmarks = useCallback(async (isManual = false) => {
-    if (isManual) setRefreshing(true);
-    else if (bookmarks.length === 0) setLoading(true);
+    if (isManual) {
+      setRefreshing(true);
+    } else if (!hasLoadedRef.current) {
+      setLoading(true);
+    }
 
     try {
       const res = await fetchBookmarks();
@@ -53,16 +57,29 @@ export default function SavedScreen({ navigation }) {
         /* ignore */
       }
     } finally {
+      hasLoadedRef.current = true;
       setLoading(false);
       setRefreshing(false);
     }
-  }, [bookmarks.length]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      loadBookmarks();
-    }, [loadBookmarks])
+      if (hasLoadedRef.current) {
+        fetchBookmarks()
+          .then((res) => {
+            if (res && Array.isArray(res.bookmarks)) {
+              setBookmarks(res.bookmarks);
+            }
+          })
+          .catch(() => {});
+      }
+    }, [])
   );
+
+  useEffect(() => {
+    loadBookmarks();
+  }, [loadBookmarks]);
 
   useEffect(() => {
     const unsubscribe = subscribeToLiveSync((event) => {

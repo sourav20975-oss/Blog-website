@@ -1,17 +1,17 @@
 export const lightColors = {
   isDark: false,
-  surface: '#f8fafc',
-  card: '#ffffff',
-  border: '#e4e4e7',
-  text: '#18181b',
-  textSecondary: '#52525b',
-  textMuted: '#71717a',
+  surface: '#fafbfd', // matching web --surface: 250 251 253
+  card: '#ffffff',    // matching web --card: 255 255 255
+  border: '#e4e7ec',  // matching web --borderc: 228 231 236
+  text: '#18181b',    // zinc-900
+  textSecondary: '#52525b', // zinc-600
+  textMuted: '#71717a',     // zinc-500
   placeholder: '#a1a1aa',
-  primary: '#f97316',
-  primaryHover: '#ea580c',
-  primaryLight: '#fff7ed',
+  primary: '#f97316', // orange-500
+  primaryHover: '#ea580c', // orange-600
+  primaryLight: '#fff7ed', // orange-50
   primaryGlow: 'rgba(249, 115, 22, 0.12)',
-  primaryBorder: 'rgba(249, 115, 22, 0.3)',
+  primaryBorder: 'rgba(249, 115, 22, 0.28)',
   badgeBg: '#ffedd5',
   badgeText: '#ea580c',
   codeBg: '#f4f4f5',
@@ -30,26 +30,26 @@ export const lightColors = {
 
 export const darkColors = {
   isDark: true,
-  surface: '#0a0a0b',
-  card: '#141417',
-  border: '#27272a',
-  text: '#f4f4f5',
-  textSecondary: '#d4d4d8',
-  textMuted: '#a1a1aa',
-  placeholder: '#71717a',
-  primary: '#f97316',
-  primaryHover: '#fb923c',
-  primaryLight: '#2c1a0e',
+  surface: '#0b0b0d', // matching web .dark --surface: 11 11 13
+  card: '#121215',    // matching web .dark --card: 18 18 21
+  border: '#222227',  // matching web .dark --borderc: 34 34 39
+  text: '#f4f4f5',    // zinc-100
+  textSecondary: '#a1a1aa', // zinc-400
+  textMuted: '#71717a',     // zinc-500
+  placeholder: '#52525b',
+  primary: '#f97316', // orange-500
+  primaryHover: '#fb923c', // orange-400
+  primaryLight: '#1f140e',
   primaryGlow: 'rgba(249, 115, 22, 0.18)',
   primaryBorder: 'rgba(249, 115, 22, 0.35)',
-  badgeBg: 'rgba(249, 115, 22, 0.15)',
+  badgeBg: 'rgba(249, 115, 22, 0.12)',
   badgeText: '#fb923c',
-  codeBg: '#27272a',
+  codeBg: '#1c1c21',
   codeText: '#fdba74',
-  preBg: '#0d1117',
+  preBg: '#09090b',
   preText: '#e6edf3',
   quoteBorder: '#f97316',
-  quoteBg: '#18181b',
+  quoteBg: '#151518',
   danger: '#f87171',
   dangerBg: 'rgba(239, 68, 68, 0.12)',
   dangerBorder: 'rgba(239, 68, 68, 0.3)',

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -53,6 +53,7 @@ export default function BlogPostScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const hasLoadedRef = useRef(false);
 
   // Likes state
   const [liked, setLiked] = useState(false);
@@ -72,7 +73,7 @@ export default function BlogPostScreen({ route, navigation }) {
     async (isManualRefresh = false) => {
       if (!slug) return;
       if (isManualRefresh) setRefreshing(true);
-      else if (!post) setLoading(true);
+      else if (!hasLoadedRef.current) setLoading(true);
       setError('');
 
       try {
@@ -106,6 +107,7 @@ export default function BlogPostScreen({ route, navigation }) {
       } catch (err) {
         setError(err.message || 'Post not found');
       } finally {
+        hasLoadedRef.current = true;
         setLoading(false);
         setRefreshing(false);
       }
@@ -113,11 +115,9 @@ export default function BlogPostScreen({ route, navigation }) {
     [slug]
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      loadPost();
-    }, [loadPost])
-  );
+  useEffect(() => {
+    loadPost();
+  }, [loadPost]);
 
   useEffect(() => {
     const unsubscribe = subscribeToLiveSync((event, payload) => {

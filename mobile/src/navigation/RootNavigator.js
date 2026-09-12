@@ -53,7 +53,7 @@ function MainTabs() {
         component={HomeScreen}
         options={{
           tabBarLabel: 'Articles',
-          tabBarIcon: ({ color, size }) => <Feather name="home" size={size - 2} color={color} />,
+          tabBarIcon: ({ color, size }) => <Feather name="book-open" size={size - 2} color={color} />,
         }}
       />
 
@@ -62,7 +62,7 @@ function MainTabs() {
         component={HandbooksScreen}
         options={{
           tabBarLabel: 'Handbooks',
-          tabBarIcon: ({ color, size }) => <Feather name="book-open" size={size - 2} color={color} />,
+          tabBarIcon: ({ color, size }) => <Feather name="file-text" size={size - 2} color={color} />,
         }}
       />
 
