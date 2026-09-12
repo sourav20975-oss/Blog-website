@@ -2,6 +2,14 @@ const express = require('express');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const { requireAuth, requireAdmin, optionalAuth } = require('../middleware/auth');
+const { store: storeContent, storePrecompressed } = require('../utils/contentCodec');
+
+// body se content lo; agar client ne pehle se gzip(base64) bheja ho toh usme [GZ] prefix add karke store karo
+function resolveContent(body) {
+  if (body.content === undefined) return undefined;
+  if (body.contentCompressed) return storePrecompressed(body.content);
+  return storeContent(body.content);
+}
 
 const router = express.Router();
 
@@ -122,7 +130,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
       author: author || req.user.name || 'Sourav Kumar',
       quote: quote ? quote.trim() : '',
       coverImage: coverImage || '',
-      content,
+      content: resolveContent(req.body) || content,
       category: category || 'General',
       tags: parsedTags,
       readTime,
@@ -145,8 +153,8 @@ router.put('/:slug', requireAuth, requireAdmin, async (req, res) => {
     if (coverImage !== undefined) update.coverImage = coverImage;
     if (category !== undefined) update.category = category;
     if (content !== undefined) {
-      update.content = content;
-      const wordCount = content.trim().split(/\s+/).length;
+      update.content = resolveContent(req.body);
+      const wordCount = (content || '').trim().split(/\s+/).length;
       update.readTime = Math.max(1, Math.ceil(wordCount / 200));
     }
     if (tags !== undefined) {

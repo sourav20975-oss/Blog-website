@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
+const { get: getContent } = require('../utils/contentCodec');
 
 const PostSchema = new mongoose.Schema(
   {
@@ -7,7 +9,7 @@ const PostSchema = new mongoose.Schema(
     author: { type: String, default: 'Sourav Kumar', trim: true },
     quote: { type: String, default: '' },
     coverImage: { type: String, default: '' },
-    content: { type: String, required: true },
+    content: { type: String, required: true, get: getContent },
     category: {
       type: String,
       default: 'General',
@@ -18,7 +20,7 @@ const PostSchema = new mongoose.Schema(
     views: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { getters: true } }
 );
 
 PostSchema.statics.slugify = function (title) {
